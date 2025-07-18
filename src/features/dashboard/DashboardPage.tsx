@@ -37,7 +37,8 @@ const DashboardPage = () => {
     const fetchDashboard = async () => {
       try {
         const response = await api.get("/dashboard");
-        setData(response.data);
+        console.log(response)
+        setData(response.data.datos);
       } catch {
         setError("No se pudo cargar la información del dashboard.");
       } finally {

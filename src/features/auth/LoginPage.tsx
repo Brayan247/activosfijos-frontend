@@ -26,7 +26,7 @@ const LoginPage = () => {
 
     try {
       const response = await api.post("/auth/login", credentials);
-      const token = response.data.token;
+      const token = response.data.datos.token;
 
       if (token) {
         localStorage.setItem("token", token);
@@ -37,7 +37,7 @@ const LoginPage = () => {
       }
     } catch (err: any) {
       const message =
-        err.response?.data?.message || err.response?.data || "Error de conexión.";
+        err.response?.data?.mensaje || err.response?.data || "Error de conexión.";
       setError(message);
     }
   };
