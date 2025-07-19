@@ -3,8 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
 
-import api from "../../services/axios";
-import LogoImage from "./LogoImagen";
+import { getDashboardData } from "./dashboardService";
+import LogoImage from "../../components/LogoImagen";
+import Card from "../../components/Cards/Card";
+import SectionHeader from "../../components/SectionHeader/SectionHeader";
+import { theme } from "../../style/theme";
 
 interface DashboardDto {
   usuarioId: number;
@@ -37,10 +40,10 @@ const DashboardPage = () => {
       return;
     }
 
-    const fetchDashboard = async () => {
+    const fetchData = async () => {
       try {
-        const response = await api.get("/dashboard");
-        setData(response.data.datos);
+        const dashboardData = await getDashboardData();
+        setData(dashboardData);
       } catch {
         setError("No se pudo cargar la información del dashboard.");
       } finally {
@@ -48,11 +51,10 @@ const DashboardPage = () => {
       }
     };
 
-    fetchDashboard();
+    fetchData();
   }, [navigate, token]);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
     navigate("/login");
   };
 
@@ -60,13 +62,11 @@ const DashboardPage = () => {
   if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   const isDark = data?.temaOscuro === true;
-  const backgroundColor = isDark ? "#121212" : "#f5f5f5";
-  const textColor = isDark ? "#eee" : "#333";
-  const cardBackground = isDark ? "#1e1e1e" : "#fff";
+  const backgroundColor = isDark ? theme.colors.darkBg : "#f5f5f5";
+  const textColor = isDark ? theme.colors.textLight : theme.colors.textDark;
 
-  const primaryColor = data?.colorPrimario || "#007bff";
-  const secondaryColor = data?.colorSecundario || "#6c757d";
-  const fontFamily = data?.fuentePersonalizada || "Segoe UI, sans-serif";
+  const primaryColor = data?.colorPrimario || theme.colors.primary;
+  const fontFamily = data?.fuentePersonalizada || theme.font.default;
 
   return (
     <div
@@ -116,53 +116,20 @@ const DashboardPage = () => {
           gap: "2rem",
         }}
       >
-        {/* Información de usuario */}
-        <section
-          style={{
-            backgroundColor: cardBackground,
-            borderRadius: "12px",
-            padding: "1.5rem",
-            boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-          }}
-        >
-          <h3
-            style={{
-              borderBottom: `2px solid ${primaryColor}`,
-              paddingBottom: 8,
-              marginBottom: "1rem",
-            }}
-          >
-            Información del usuario
-          </h3>
+        <Card>
+          <SectionHeader title="Información del usuario" color={primaryColor} />
           <p><strong>Nombre:</strong> {data?.nombreUsuario} {data?.apellidoUsuario}</p>
           <p><strong>Usuario:</strong> {data?.username}</p>
           <p><strong>Rol ID:</strong> {data?.rolId}</p>
           <p><strong>Idioma:</strong> {data?.idiomaPreferido}</p>
           <p><strong>Último login:</strong> {data?.ultimoLogin || "Nunca"}</p>
           <p><strong>IP:</strong> {data?.ipUltimoLogin || "No disponible"}</p>
-        </section>
-
-        {/* Información de empresa */}
-        <section
-          style={{
-            backgroundColor: cardBackground,
-            borderRadius: "12px",
-            padding: "1.5rem",
-            boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-          }}
-        >
-          <h3
-            style={{
-              borderBottom: `2px solid ${primaryColor}`,
-              paddingBottom: 8,
-              marginBottom: "1rem",
-            }}
-          >
-            Información de la empresa
-          </h3>
+        </Card>
+        <Card>
+          <SectionHeader title="Información de la empresa" color={primaryColor} />
           <p><strong>Nombre comercial:</strong> {data?.nombreComercial}</p>
           <p><strong>ID Empresa:</strong> {data?.empresaId}</p>
-        </section>
+        </Card>
       </main>
     </div>
   );

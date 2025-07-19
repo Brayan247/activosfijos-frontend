@@ -4,13 +4,10 @@ import { useDispatch } from "react-redux";
 import { setToken } from "../../store/slices/authSlice";
 import { setAuthToken } from "../../services/axios";
 
-import api from "../../services/axios";
-
-// Valores por defecto (los mismos que el dashboard si no hay configuración aún)
-const defaultPrimaryColor = "#007bff";
-const defaultSecondaryColor = "#6c757d";
-const defaultIsDark = false;
-const defaultFontFamily = "Arial, sans-serif";
+import { login } from "./authService";
+import TextInput from "../../components/Input/TextInput";
+import PrimaryButton from "../../components/Button/PrimaryButton";
+import { theme } from "../../style/theme";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -31,27 +28,17 @@ const LoginPage = () => {
     setError("");
 
     try {
-      const response = await api.post("/auth/login", credentials);
-      const token = response.data.datos.token;
+      const token = await login(credentials)
 
       if (token) {
         dispatch(setToken(token));
         setAuthToken(token);
         navigate("/dashboard");
-      } else {
-        const message = response.data.mensaje;
-        setError(message);
-      }
+      } 
     } catch (err: any) {
-      const message =
-        err.response?.data?.mensaje || err.response?.data || "Error de conexión.";
-      setError(message);
+      setError(err.response?.data?.mensaje || "Error de conexión.");
     }
   };
-
-  // Estilos unificados
-  const backgroundColor = defaultIsDark ? "#121212" : "#fff";
-  const textColor = defaultIsDark ? "#eee" : "#000";
 
   return (
     <div
@@ -60,15 +47,15 @@ const LoginPage = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        backgroundColor,
-        color: textColor,
-        fontFamily: defaultFontFamily,
+        backgroundColor: theme.colors.lightBg,
+        color: theme.colors.textLight,
+        fontFamily: theme.font.default,
         padding: "1rem",
       }}
     >
       <div
         style={{
-          backgroundColor: defaultIsDark ? "#1e1e1e" : "#f9f9f9",
+          backgroundColor: "#f9f9f9",
           padding: "2rem",
           borderRadius: "12px",
           boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
@@ -78,7 +65,7 @@ const LoginPage = () => {
       >
         <h2
           style={{
-            color: defaultPrimaryColor,
+            color: theme.colors.primary,
             textAlign: "center",
             marginBottom: "1.5rem",
           }}
@@ -87,27 +74,9 @@ const LoginPage = () => {
         </h2>
 
         <form onSubmit={handleSubmit}>
-          <input
-            type="text"
-            name="username"
-            placeholder="Usuario"
-            value={credentials.username}
-            onChange={handleChange}
-            required
-            style={inputStyle}
-          />
-          <input
-            type="password"
-            name="password"
-            placeholder="Contraseña"
-            value={credentials.password}
-            onChange={handleChange}
-            required
-            style={inputStyle}
-          />
-          <button type="submit" style={buttonStyle}>
-            Iniciar sesión
-          </button>
+          <TextInput name="username" placeholder="Usuario" value={credentials.username} onChange={handleChange} />
+          <TextInput name="password" type="password" placeholder="Contraseña" value={credentials.password} onChange={handleChange} />
+          <PrimaryButton type="submit">Iniciar sesión</PrimaryButton>
           {error && (
             <p style={{ color: "red", textAlign: "center", marginTop: "1rem" }}>
               {error}
@@ -117,30 +86,6 @@ const LoginPage = () => {
       </div>
     </div>
   );
-};
-
-// Estilos de elementos reutilizables
-const inputStyle: React.CSSProperties = {
-  padding: "0.75rem 1rem",
-  marginBottom: "1rem",
-  borderRadius: "8px",
-  border: "1px solid #ccc",
-  fontSize: "1rem",
-  outlineColor: defaultPrimaryColor,
-  width: "100%",
-};
-
-const buttonStyle: React.CSSProperties = {
-  backgroundColor: defaultPrimaryColor,
-  color: "#fff",
-  padding: "0.75rem",
-  borderRadius: "8px",
-  border: "none",
-  cursor: "pointer",
-  fontWeight: "bold",
-  fontSize: "1rem",
-  width: "100%",
-  transition: "background 0.3s ease",
 };
 
 export default LoginPage;
