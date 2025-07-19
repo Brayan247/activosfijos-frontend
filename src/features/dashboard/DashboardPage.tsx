@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store";
+
 import api from "../../services/axios";
 import LogoImage from "./LogoImagen";
 
@@ -26,9 +29,9 @@ const DashboardPage = () => {
   const [data, setData] = useState<DashboardDto | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
+  const token = useSelector((state: RootState) => state.auth.token);
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
     if (!token) {
       navigate("/login");
       return;
@@ -37,7 +40,6 @@ const DashboardPage = () => {
     const fetchDashboard = async () => {
       try {
         const response = await api.get("/dashboard");
-        console.log(response)
         setData(response.data.datos);
       } catch {
         setError("No se pudo cargar la información del dashboard.");
@@ -47,7 +49,7 @@ const DashboardPage = () => {
     };
 
     fetchDashboard();
-  }, [navigate]);
+  }, [navigate, token]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");

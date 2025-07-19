@@ -1,5 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { setToken } from "../../store/slices/authSlice";
+import { setAuthToken } from "../../services/axios";
+
 import api from "../../services/axios";
 
 // Valores por defecto (los mismos que el dashboard si no hay configuración aún)
@@ -10,6 +14,8 @@ const defaultFontFamily = "Arial, sans-serif";
 
 const LoginPage = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  
   const [credentials, setCredentials] = useState({
     username: "",
     password: "",
@@ -29,7 +35,8 @@ const LoginPage = () => {
       const token = response.data.datos.token;
 
       if (token) {
-        localStorage.setItem("token", token);
+        dispatch(setToken(token));
+        setAuthToken(token);
         navigate("/dashboard");
       } else {
         const message = response.data.mensaje;
