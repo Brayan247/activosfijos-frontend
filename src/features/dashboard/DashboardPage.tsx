@@ -5,9 +5,10 @@ import { RootState } from "../../store";
 
 import { getDashboardData } from "./dashboardService";
 import LogoImage from "../../components/LogoImagen";
-import Card from "../../components/Cards/Card";
 import SectionHeader from "../../components/SectionHeader/SectionHeader";
 import { theme } from "../../style/theme";
+
+import { Box, Typography, Button, Grid, Paper } from "@mui/material";
 
 interface DashboardDto {
   usuarioId: number;
@@ -58,8 +59,34 @@ const DashboardPage = () => {
     navigate("/login");
   };
 
-  if (loading) return <p>Cargando datos...</p>;
-  if (error) return <p style={{ color: "red" }}>{error}</p>;
+  if (loading)
+    return (
+      <Box
+        sx={{
+          height: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Typography variant="h6">Cargando datos...</Typography>
+      </Box>
+    );
+  if (error)
+    return (
+      <Box
+        sx={{
+          height: "100vh",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Typography variant="h6" color="error">
+          {error}
+        </Typography>
+      </Box>
+    );
 
   const isDark = data?.temaOscuro === true;
   const backgroundColor = isDark ? theme.colors.darkBg : "#f5f5f5";
@@ -69,69 +96,88 @@ const DashboardPage = () => {
   const fontFamily = data?.fuentePersonalizada || theme.font.default;
 
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         backgroundColor,
         color: textColor,
         fontFamily,
         minHeight: "100vh",
-        padding: "2rem",
+        p: 4,
         transition: "all 0.3s ease",
       }}
     >
-      <header
-        style={{
+      <Box
+        component="header"
+        sx={{
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          marginBottom: "2rem",
+          mb: 4,
         }}
       >
-        <div style={{ display: "flex", alignItems: "center" }}>
+        <Box sx={{ display: "flex", alignItems: "center" }}>
           <LogoImage src={data?.logoUrl} alt="Logo empresa" />
-          <h1 style={{ color: primaryColor, marginLeft: "1rem" }}>
+          <Typography
+            variant="h4"
+            sx={{ color: primaryColor, ml: 2, fontWeight: "bold" }}
+          >
             Panel principal
-          </h1>
-        </div>
-        <button
+          </Typography>
+        </Box>
+        <Button
+          variant="contained"
           onClick={handleLogout}
-          style={{
+          sx={{
             backgroundColor: primaryColor,
             color: "#fff",
-            border: "none",
-            padding: "0.5rem 1rem",
-            borderRadius: "6px",
-            cursor: "pointer",
             fontWeight: "bold",
+            "&:hover": {
+              backgroundColor: primaryColor,
+            },
           }}
         >
           Cerrar sesión
-        </button>
-      </header>
+        </Button>
+      </Box>
 
-      <main
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 1fr",
-          gap: "2rem",
-        }}
-      >
-        <Card>
+      <Grid container spacing={4}>
+        <Paper sx={{ p: 3, bgcolor: isDark ? "#333" : "#fff" }} elevation={3}>
           <SectionHeader title="Información del usuario" color={primaryColor} />
-          <p><strong>Nombre:</strong> {data?.nombreUsuario} {data?.apellidoUsuario}</p>
-          <p><strong>Usuario:</strong> {data?.username}</p>
-          <p><strong>Rol ID:</strong> {data?.rolId}</p>
-          <p><strong>Idioma:</strong> {data?.idiomaPreferido}</p>
-          <p><strong>Último login:</strong> {data?.ultimoLogin || "Nunca"}</p>
-          <p><strong>IP:</strong> {data?.ipUltimoLogin || "No disponible"}</p>
-        </Card>
-        <Card>
-          <SectionHeader title="Información de la empresa" color={primaryColor} />
-          <p><strong>Nombre comercial:</strong> {data?.nombreComercial}</p>
-          <p><strong>ID Empresa:</strong> {data?.empresaId}</p>
-        </Card>
-      </main>
-    </div>
+          <Typography>
+            <strong>Nombre:</strong> {data?.nombreUsuario}{" "}
+            {data?.apellidoUsuario}
+          </Typography>
+          <Typography>
+            <strong>Usuario:</strong> {data?.username}
+          </Typography>
+          <Typography>
+            <strong>Rol ID:</strong> {data?.rolId}
+          </Typography>
+          <Typography>
+            <strong>Idioma:</strong> {data?.idiomaPreferido}
+          </Typography>
+          <Typography>
+            <strong>Último login:</strong> {data?.ultimoLogin || "Nunca"}
+          </Typography>
+          <Typography>
+            <strong>IP:</strong> {data?.ipUltimoLogin || "No disponible"}
+          </Typography>
+        </Paper>
+
+        <Paper sx={{ p: 3, bgcolor: isDark ? "#333" : "#fff" }} elevation={3}>
+          <SectionHeader
+            title="Información de la empresa"
+            color={primaryColor}
+          />
+          <Typography>
+            <strong>Nombre comercial:</strong> {data?.nombreComercial}
+          </Typography>
+          <Typography>
+            <strong>ID Empresa:</strong> {data?.empresaId}
+          </Typography>
+        </Paper>
+      </Grid>
+    </Box>
   );
 };
 

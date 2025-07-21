@@ -1,4 +1,5 @@
 import React from "react";
+import TextField from "@mui/material/TextField";
 
 interface TextInputProps {
   name: string;
@@ -6,24 +7,32 @@ interface TextInputProps {
   placeholder?: string;
   value: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
+  required?: boolean;
+  disabled?: boolean;
 }
 
-const TextInput = ({ name, type = "text", placeholder, value, onChange }: TextInputProps) => (
-  <input
-    name={name}
+const TextInput = ({
+  name,
+  type = "text",
+  placeholder,
+  value,
+  onChange,
+  onBlur,
+  required = false,
+  disabled = false,
+}: TextInputProps) => (
+  <TextField
+    fullWidth
     type={type}
-    placeholder={placeholder}
+    name={name}
+    label={placeholder}
     value={value}
     onChange={onChange}
-    required
-    style={{
-      padding: "0.75rem 1rem",
-      marginBottom: "1rem",
-      borderRadius: "8px",
-      border: "1px solid #ccc",
-      fontSize: "1rem",
-      width: "100%",
-    }}
+    onBlur={onBlur}
+    required={required}
+    disabled={disabled}
+    margin="normal"
   />
 );
 

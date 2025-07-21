@@ -5,14 +5,17 @@ import { setToken } from "../../store/slices/authSlice";
 import { setAuthToken } from "../../services/axios";
 
 import { login } from "./authService";
-import TextInput from "../../components/Input/TextInput";
-import PrimaryButton from "../../components/Button/PrimaryButton";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
+import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import Paper from "@mui/material/Paper";
 import { theme } from "../../style/theme";
 
 const LoginPage = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  
+
   const [credentials, setCredentials] = useState({
     username: "",
     password: "",
@@ -28,21 +31,21 @@ const LoginPage = () => {
     setError("");
 
     try {
-      const token = await login(credentials)
+      const token = await login(credentials);
 
       if (token) {
         dispatch(setToken(token));
         setAuthToken(token);
         navigate("/dashboard");
-      } 
+      }
     } catch (err: any) {
       setError(err.response?.data?.mensaje || "Error de conexión.");
     }
   };
 
   return (
-    <div
-      style={{
+    <Box
+      sx={{
         height: "100vh",
         display: "flex",
         alignItems: "center",
@@ -50,41 +53,57 @@ const LoginPage = () => {
         backgroundColor: theme.colors.lightBg,
         color: theme.colors.textLight,
         fontFamily: theme.font.default,
-        padding: "1rem",
+        p: 2,
       }}
     >
-      <div
-        style={{
+      <Paper
+        elevation={4}
+        sx={{
           backgroundColor: "#f9f9f9",
-          padding: "2rem",
-          borderRadius: "12px",
-          boxShadow: "0 4px 12px rgba(0, 0, 0, 0.1)",
+          p: 4,
+          borderRadius: 3,
           width: "100%",
-          maxWidth: "400px",
+          maxWidth: 400,
         }}
       >
-        <h2
-          style={{
-            color: theme.colors.primary,
-            textAlign: "center",
-            marginBottom: "1.5rem",
-          }}
-        >
+        <Typography variant="h5" align="center" mb={3} color={theme.colors.primary}>
           Iniciar sesión
-        </h2>
+        </Typography>
 
-        <form onSubmit={handleSubmit}>
-          <TextInput name="username" placeholder="Usuario" value={credentials.username} onChange={handleChange} />
-          <TextInput name="password" type="password" placeholder="Contraseña" value={credentials.password} onChange={handleChange} />
-          <PrimaryButton type="submit">Iniciar sesión</PrimaryButton>
+        <Box component="form" onSubmit={handleSubmit}>
+          <TextField
+            fullWidth
+            label="Usuario"
+            name="username"
+            value={credentials.username}
+            onChange={handleChange}
+            margin="normal"
+          />
+          <TextField
+            fullWidth
+            label="Contraseña"
+            name="password"
+            type="password"
+            value={credentials.password}
+            onChange={handleChange}
+            margin="normal"
+          />
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            sx={{ mt: 2 }}
+          >
+            Iniciar sesión
+          </Button>
           {error && (
-            <p style={{ color: "red", textAlign: "center", marginTop: "1rem" }}>
+            <Typography color="error" align="center" mt={2}>
               {error}
-            </p>
+            </Typography>
           )}
-        </form>
-      </div>
-    </div>
+        </Box>
+      </Paper>
+    </Box>
   );
 };
 

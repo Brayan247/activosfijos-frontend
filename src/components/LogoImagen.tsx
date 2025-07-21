@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const LogoImage = ({ src, alt }: { src?: string; alt: string }) => {
   const [imgSrc, setImgSrc] = useState(src || '');

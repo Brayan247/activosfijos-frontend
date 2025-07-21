@@ -1,4 +1,5 @@
 import React from "react";
+import Button from "@mui/material/Button";
 
 interface ButtonProps {
   onClick?: () => void;
@@ -7,23 +8,15 @@ interface ButtonProps {
 }
 
 const PrimaryButton = ({ onClick, children, type = "button" }: ButtonProps) => (
-  <button
+  <Button
     type={type}
     onClick={onClick}
-    style={{
-      backgroundColor: "#007bff",
-      color: "#fff",
-      padding: "0.75rem",
-      borderRadius: "8px",
-      border: "none",
-      cursor: "pointer",
-      fontWeight: "bold",
-      fontSize: "1rem",
-      width: "100%",
-    }}
+    variant="contained"
+    fullWidth
+    sx={{ paddingY: 1.5, fontWeight: "bold", fontSize: "1rem" }}
   >
     {children}
-  </button>
+  </Button>
 );
 
 export default PrimaryButton;

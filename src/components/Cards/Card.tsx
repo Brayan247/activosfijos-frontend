@@ -1,16 +1,13 @@
 import React from "react";
+import MuiCard from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
 
 const Card = ({ children }: { children: React.ReactNode }) => (
-  <div
-    style={{
-      borderRadius: "12px",
-      padding: "1.5rem",
-      boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-      backgroundColor: "#fff",
-    }}
-  >
-    {children}
-  </div>
+  <MuiCard sx={{ borderRadius: 3, boxShadow: 3 }}>
+    <CardContent>
+      {children}
+    </CardContent>
+  </MuiCard>
 );
 
 export default Card;
