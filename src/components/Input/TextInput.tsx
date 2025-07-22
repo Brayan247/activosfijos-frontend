@@ -1,5 +1,5 @@
 import React from "react";
-import TextField from "@mui/material/TextField";
+import {TextField, Grid} from "@mui/material";
 
 interface TextInputProps {
   name: string;
@@ -22,18 +22,20 @@ const TextInput = ({
   required = false,
   disabled = false,
 }: TextInputProps) => (
-  <TextField
-    fullWidth
-    type={type}
-    name={name}
-    label={placeholder}
-    value={value}
-    onChange={onChange}
-    onBlur={onBlur}
-    required={required}
-    disabled={disabled}
-    margin="normal"
-  />
+  <Grid size={{ xs: 12, md: 6 }}>
+    <TextField
+      fullWidth
+      type={type}
+      name={name}
+      label={placeholder}
+      value={value}
+      onChange={onChange}
+      onBlur={onBlur}
+      required={required}
+      disabled={disabled}
+      margin="normal"
+    />
+  </Grid>
 );
 
 export default TextInput;

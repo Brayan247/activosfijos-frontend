@@ -140,7 +140,7 @@ const DashboardPage = () => {
         </Button>
       </Box>
 
-      <Grid container spacing={4}>
+      <Grid container spacing={4} size={{ xs: 12, md: 6 }}>
         <Paper sx={{ p: 3, bgcolor: isDark ? "#333" : "#fff" }} elevation={3}>
           <SectionHeader title="Información del usuario" color={primaryColor} />
           <Typography>
@@ -164,18 +164,20 @@ const DashboardPage = () => {
           </Typography>
         </Paper>
 
-        <Paper sx={{ p: 3, bgcolor: isDark ? "#333" : "#fff" }} elevation={3}>
-          <SectionHeader
-            title="Información de la empresa"
-            color={primaryColor}
-          />
-          <Typography>
-            <strong>Nombre comercial:</strong> {data?.nombreComercial}
-          </Typography>
-          <Typography>
-            <strong>ID Empresa:</strong> {data?.empresaId}
-          </Typography>
-        </Paper>
+        <Grid container spacing={4} size={{ xs: 12, md: 6 }}>
+          <Paper sx={{ p: 3, bgcolor: isDark ? "#333" : "#fff" }} elevation={3}>
+            <SectionHeader
+              title="Información de la empresa"
+              color={primaryColor}
+            />
+            <Typography>
+              <strong>Nombre comercial:</strong> {data?.nombreComercial}
+            </Typography>
+            <Typography>
+              <strong>ID Empresa:</strong> {data?.empresaId}
+            </Typography>
+          </Paper>
+        </Grid>
       </Grid>
     </Box>
   );
