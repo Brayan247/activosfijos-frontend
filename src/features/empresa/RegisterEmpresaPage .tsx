@@ -1,5 +1,5 @@
 import { Box, Typography } from "@mui/material";
-import EmpresaRegisterForm from "./forms/EmpresaRegisterForm";
+import EmpresaRegisterForm from "./components/EmpresaRegisterForm";
 
 const RegisterEmpresaPage = () => {
 

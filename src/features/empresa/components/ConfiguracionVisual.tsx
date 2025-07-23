@@ -37,7 +37,6 @@ const ConfiguracionVisualForm = ({ onChange, initialData }: Props) => {
 
   const handleGuardarConfig = () => {
     onChange(formData);
-    console.log(formData)
   };
 
   return (
