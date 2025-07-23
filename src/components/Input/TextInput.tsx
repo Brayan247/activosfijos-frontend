@@ -10,6 +10,8 @@ interface TextInputProps {
   onBlur?: (e: React.FocusEvent<HTMLInputElement>) => void;
   required?: boolean;
   disabled?: boolean;
+  error?: boolean;
+  helperText?: string;
 }
 
 const TextInput = ({
@@ -21,6 +23,8 @@ const TextInput = ({
   onBlur,
   required = false,
   disabled = false,
+  error = false,
+  helperText = "",
 }: TextInputProps) => (
   <Grid size={{ xs: 12, md: 6 }}>
     <TextField
@@ -33,6 +37,8 @@ const TextInput = ({
       onBlur={onBlur}
       required={required}
       disabled={disabled}
+      error={error}
+      helperText={helperText} 
       margin="normal"
     />
   </Grid>

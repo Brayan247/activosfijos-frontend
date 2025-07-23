@@ -55,6 +55,8 @@ const EmpresaRegisterForm = () => {
     sitioWeb: "",
     showConfigVisual: false,
   });
+  const [validatingRuc, setValidatingRuc] = useState(false);
+  const [rucError, setRucError] = useState<string | null>(null);
   const [datosConfig, setDatosConfig] = useState<
     ConfiguracionVisual | undefined
   >();
@@ -144,13 +146,20 @@ const EmpresaRegisterForm = () => {
     setFormData(updatedFormData);
   };
 
-  const handleRucBlur = async () => {
-    if (!formData.ruc) return;
+  const handleValidarRuc = async () => {
+    setRucError("");
+    if (!formData.ruc || formData.ruc.length !== 13) {
+      setRucError("El RUC debe tener exactamente 13 dígitos.");
+      return;
+    }
+    setValidatingRuc(true);
     try {
       const response = await api.get(
         `/empresa/validar-ruc?ruc=${formData.ruc}`
       );
-      const data = response.data.datos[0];
+      const datos = response.data?.datos;
+      const data = datos[0];
+
       setFormData({
         ...formData,
         razonSocial: data.razonSocial,
@@ -162,13 +171,26 @@ const EmpresaRegisterForm = () => {
         fechaInicioActividades:
           data.informacionFechasContribuyente.fechaInicioActividades,
       });
-    } catch (err) {
-      console.error(err);
+    } catch (err: any) {
+      setFormData({
+        ...formData,
+        razonSocial: "",
+        estadoContribuyenteRuc: "",
+        actividadEconomicaPrincipal: "",
+        tipoContribuyente: "",
+        regimen: "",
+        categoria: "",
+        fechaInicioActividades: "",
+      });
+      const error = err.response?.data?.mensaje;
+      setRucError(error);
+    } finally {
+      setValidatingRuc(false);
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    console.log(datosConfig)
+    console.log(datosConfig);
     e.preventDefault();
     setError("");
     try {
@@ -188,14 +210,24 @@ const EmpresaRegisterForm = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <Grid container spacing={1}>
+      <Grid container spacing={2}>
         <TextInput
           name="ruc"
           placeholder="RUC"
           value={formData.ruc}
           onChange={handleChange}
-          onBlur={handleRucBlur}
+          error={!!rucError}
+          helperText={rucError ?? undefined}
         />
+        <Grid size={{ xs: 12, md: 6 }} alignContent={"center"} >
+          <Button
+            variant="contained"
+            onClick={handleValidarRuc}
+            disabled={validatingRuc}
+          >
+            {validatingRuc ? "Validando..." : "Validar RUC"}
+          </Button>
+        </Grid>
         <TextInput
           name="razonSocial"
           placeholder="Razón Social"
