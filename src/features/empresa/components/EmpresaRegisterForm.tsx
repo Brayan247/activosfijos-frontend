@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Grid, Alert, Box, SelectChangeEvent, Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
 
 import PrimaryButton from "../../../components/Button/PrimaryButton";
 
@@ -10,6 +11,8 @@ import ConfiguracionVisualForm from "./ConfiguracionVisual";
 import api from "../../../services/axios";
 import formatFecha, { validateRucEcuador } from "../../../utils/Helpers";
 import mapFormDataToPayload from "../../../types/EmpresaFormData";
+import { useDispatch } from "react-redux";
+import { setEmpresaId } from "../../../store/slices/authSlice";
 
 import {
   EmpresaFormData,
@@ -39,6 +42,9 @@ const EmpresaRegisterForm = () => {
     tema_oscuro?: boolean;
     fuente_personalizada?: string;
   }
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState<EmpresaFormData>(initialFormData);
   const [errores, setErrores] = useState({});
@@ -256,7 +262,13 @@ const EmpresaRegisterForm = () => {
           datosConfig?.fuente_personalizada || formData.fuente_personalizada,
       };
       const payload = mapFormDataToPayload(dataToSend);
-      await api.post("/empresa/registrar", payload);
+      const response = await api.post("/empresa/registrar", payload);
+      const empresaId = response.data.datos.empresaId;
+      if (empresaId) {
+        dispatch(setEmpresaId(empresaId));
+        setEmpresaId(empresaId);
+        navigate("/register/usuario");
+      }
     } catch (err: any) {
       const error = err.response?.data?.mensaje;
       setError(error);

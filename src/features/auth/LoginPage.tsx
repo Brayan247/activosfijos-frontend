@@ -99,7 +99,7 @@ const LoginPage = () => {
           <Button
             fullWidth
             variant="outlined"
-            onClick={() => navigate("/register")}
+            onClick={() => navigate("/register/empresa")}
             sx={{ mt: 2, color: theme.colors.primary, textTransform: "none" }}
           >
             Registro

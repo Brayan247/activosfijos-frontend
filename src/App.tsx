@@ -3,6 +3,7 @@ import { PrivateRoute } from "./routes/PrivateRoute";
 import Dashboard from "./features/dashboard/DashboardPage";
 import Login from "./features/auth/LoginPage";
 import RegisterEmpresaPage from "./features/empresa/RegisterEmpresaPage ";
+import RegisterUsuarioPage from "./features/usuario/RegisterUsuarioPage";
 
 function App() {
   return (
@@ -10,7 +11,15 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<RegisterEmpresaPage />} />
+        <Route path="/register/empresa" element={<RegisterEmpresaPage />} />
+        <Route
+          path="/register/usuario"
+          element={
+            <PrivateRoute requireEmpresaId={true}>
+              <RegisterUsuarioPage />
+            </PrivateRoute>
+          }
+        />
         <Route
           path="/dashboard"
           element={
