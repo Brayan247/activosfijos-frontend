@@ -10,6 +10,13 @@ interface Opcion {
   parroquia?: string;
 }
 
+interface Errors {
+  telefono?: string;
+  email?: string;
+  sitioWeb?: string;
+  [key: string]: string | undefined; // para cualquier otro campo
+}
+
 interface Props {
   formData: EmpresaFormData;
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -18,6 +25,7 @@ interface Props {
   provinciaEstados: Opcion[];
   cantones: Opcion[];
   ciudadParroquias: Opcion[];
+  errors: Errors
 }
 
 const DatosContactoGeografico = ({
@@ -28,6 +36,7 @@ const DatosContactoGeografico = ({
   provinciaEstados,
   cantones,
   ciudadParroquias,
+  errors
 }: Props) => {
   return (
     <>
@@ -85,18 +94,24 @@ const DatosContactoGeografico = ({
         placeholder="Teléfono"
         value={formData.telefono}
         onChange={handleChange}
+        error={!!errors.telefono}
+        helperText={errors.telefono}
       />
       <TextInput
         name="email"
         placeholder="Email"
         value={formData.email}
         onChange={handleChange}
+        error={!!errors.email}
+        helperText={errors.email}
       />
       <TextInput
         name="sitioWeb"
         placeholder="Sitio Web"
         value={formData.sitioWeb}
         onChange={handleChange}
+        error={!!errors.sitioWeb}
+        helperText={errors.sitioWeb}
       />
     </>
   );

@@ -61,8 +61,6 @@ export const initialFormData: EmpresaFormData = {
 };
 
 const mapFormDataToPayload = (formData: EmpresaFormData) => {
-  const now = new Date().toISOString();
-
   return {
     ruc: formData.ruc,
     razonSocial: formData.razonSocial,
@@ -81,17 +79,11 @@ const mapFormDataToPayload = (formData: EmpresaFormData) => {
     telefono: formData.telefono,
     email: formData.email,
     sitioWeb: formData.sitioWeb,
-    fechaCreacion: now,
-    fechaModificacion: now,
-    estado: 1, // puedes cambiar el valor por defecto si deseas
     colorPrimario: formData.color_primario,
     colorSecundario: formData.color_secundario,
     logoUrl: formData.logo_url,
-    temaOscuro: false, // o puedes obtenerlo si lo agregas en el form
+    temaOscuro: false,
     fuentePersonalizada: formData.fuente_personalizada,
-    fechaCreacionConfiguracion: now,
-    fechaModificacionConfiguracion: now,
-    estadoConfiguracion: 1 // o cambia según lógica
   };
 };
 

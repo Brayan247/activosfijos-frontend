@@ -8,7 +8,7 @@ import DatosContactoGeografico from "./DatosContactoGeografico";
 import ConfiguracionVisualForm from "./ConfiguracionVisual";
 
 import api from "../../../services/axios";
-import formatFecha from "../../../utils/Helpers";
+import formatFecha, { validateRucEcuador } from "../../../utils/Helpers";
 import mapFormDataToPayload from "../../../types/EmpresaFormData";
 
 import {
@@ -16,15 +16,21 @@ import {
   initialFormData,
 } from "../../../types/EmpresaFormData";
 
-const EmpresaRegisterForm = () => {
+import {
+  isValidEmail,
+  isValidPhone,
+  isValidURL,
+  isValidHexColor,
+} from "../../../utils/Helpers";
 
+const EmpresaRegisterForm = () => {
   interface Opcion {
-  id: string | number;
-  nombre?: string;
-  provincia: string;
-  canton: string;
-  parroquia: string;
-}
+    id: string | number;
+    nombre?: string;
+    provincia: string;
+    canton: string;
+    parroquia: string;
+  }
 
   interface ConfiguracionVisual {
     color_primario: string;
@@ -35,6 +41,7 @@ const EmpresaRegisterForm = () => {
   }
 
   const [formData, setFormData] = useState<EmpresaFormData>(initialFormData);
+  const [errores, setErrores] = useState({});
 
   const [validatingRuc, setValidatingRuc] = useState(false);
   const [rucError, setRucError] = useState<string | null>(null);
@@ -139,6 +146,7 @@ const EmpresaRegisterForm = () => {
 
   const handleValidarRuc = async () => {
     setRucError("");
+    setErrores("");
     setValidatingRuc(true);
     try {
       const response = await api.get(
@@ -177,26 +185,81 @@ const EmpresaRegisterForm = () => {
     }
   };
 
+  const validarFormularioCompleto = (): boolean => {
+    const newErrors: Record<string, string> = {};
+
+    if (!formData.ruc) {
+      newErrors.ruc = "El RUC es obligatorio.";
+    } else if (!validateRucEcuador(formData.ruc)) {
+      newErrors.ruc = "El RUC ingresado es incorrecto";
+    }
+
+    if (!formData.nombreComercial) {
+      newErrors.nombreComercial = "El nombre comercial es obligatorio.";
+    }
+
+    if (!formData.telefono) {
+      newErrors.telefono = "El teléfono es obligatorio.";
+    } else if (!isValidPhone(formData.telefono)) {
+      newErrors.telefono = "El teléfono debe tener 10 dígitos.";
+    }
+
+    if (!formData.email) {
+      newErrors.email = "El correo electrónico es obligatorio.";
+    } else if (!isValidEmail(formData.email)) {
+      newErrors.email = "El correo electrónico no es válido.";
+    }
+
+    if (formData.sitioWeb && !isValidURL(formData.sitioWeb)) {
+      newErrors.sitioWeb = "La URL del sitio web no es válida.";
+    }
+
+    // Validaciones de datosConfig (logo, colores)
+    if (datosConfig?.logo_url && !isValidURL(datosConfig.logo_url)) {
+      newErrors.logo_url = "La URL del logo es inválida.";
+    }
+
+    if (
+      datosConfig?.color_primario &&
+      !isValidHexColor(datosConfig.color_primario)
+    ) {
+      newErrors.color_primario = "Color primario inválido.";
+    }
+
+    if (
+      datosConfig?.color_secundario &&
+      !isValidHexColor(datosConfig.color_secundario)
+    ) {
+      newErrors.color_secundario = "Color secundario inválido.";
+    }
+
+    setErrores(newErrors);
+
+    // Retorna true si no hay errores, false si los hay
+    return Object.keys(newErrors).length === 0;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError("");
-
-    const dataToSend = {
-      ...formData,
-      color_primario: datosConfig?.color_primario || formData.color_primario,
-      color_secundario:
-        datosConfig?.color_secundario || formData.color_secundario,
-      logo_url: datosConfig?.logo_url || formData.logo_url,
-      fuente_personalizada:
-        datosConfig?.fuente_personalizada || formData.fuente_personalizada,
-    };
-    const payload = mapFormDataToPayload(dataToSend);
-    console.log(payload);
     try {
+      if (!validarFormularioCompleto()) {
+        return;
+      }
+      setError("");
+      const dataToSend = {
+        ...formData,
+        color_primario: datosConfig?.color_primario || formData.color_primario,
+        color_secundario:
+          datosConfig?.color_secundario || formData.color_secundario,
+        logo_url: datosConfig?.logo_url || formData.logo_url,
+        fuente_personalizada:
+          datosConfig?.fuente_personalizada || formData.fuente_personalizada,
+      };
+      const payload = mapFormDataToPayload(dataToSend);
       await api.post("/empresa/registrar", payload);
     } catch (err: any) {
       const error = err.response?.data?.mensaje;
-      setRucError(error);
+      setError(error);
     }
   };
 
@@ -216,6 +279,7 @@ const EmpresaRegisterForm = () => {
           handleValidarRuc={handleValidarRuc}
           rucError={rucError}
           validating={validatingRuc}
+          errors={errores}
         />
         <DatosContactoGeografico
           formData={formData}
@@ -225,10 +289,14 @@ const EmpresaRegisterForm = () => {
           provinciaEstados={provinciaEstados}
           cantones={cantones}
           ciudadParroquias={ciudadParroquias}
+          errors={errores}
         />
       </Grid>
       {formData.showConfigVisual && (
-        <ConfiguracionVisualForm onChange={(data) => setDatosConfig(data)} />
+        <ConfiguracionVisualForm
+          onChange={(data) => setDatosConfig(data)}
+          errors={errores}
+        />
       )}
       {error && (
         <Box mt={3}>

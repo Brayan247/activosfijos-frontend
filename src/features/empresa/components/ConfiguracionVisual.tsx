@@ -10,12 +10,20 @@ interface ConfiguracionVisual {
   fuente_personalizada: string;
 }
 
+interface Errors {
+  color_primario?: string;
+  color_secundario?: string;
+  logo_url?: string;
+  [key: string]: string | undefined; // para cualquier otro campo
+}
+
 interface Props {
   onChange: (data: ConfiguracionVisual) => void;
   initialData?: ConfiguracionVisual;
+  errors: Errors;
 }
 
-const ConfiguracionVisualForm = ({ onChange, initialData }: Props) => {
+const ConfiguracionVisualForm = ({ onChange, initialData, errors }: Props) => {
   const [formData, setFormData] = useState<ConfiguracionVisual>({
     color_primario: initialData?.color_primario || theme.colors.primary,
     color_secundario: initialData?.color_secundario || theme.colors.secondary,
@@ -47,6 +55,8 @@ const ConfiguracionVisualForm = ({ onChange, initialData }: Props) => {
         placeholder="Color Primario"
         value={formData.color_primario}
         onChange={handleChange}
+        error={!!errors.color_primario}
+        helperText={errors.color_primario}
       />
 
       <TextInput
@@ -55,6 +65,8 @@ const ConfiguracionVisualForm = ({ onChange, initialData }: Props) => {
         placeholder="Color Secundario"
         value={formData.color_secundario}
         onChange={handleChange}
+        error={!!errors.color_secundario}
+        helperText={errors.color_secundario}
       />
 
       <TextInput
@@ -63,6 +75,8 @@ const ConfiguracionVisualForm = ({ onChange, initialData }: Props) => {
         placeholder="URL del Logo"
         value={formData.logo_url}
         onChange={handleChange}
+        error={!!errors.logo_url}
+        helperText={errors.logo_url}
       />
 
       <TextInput
@@ -72,8 +86,10 @@ const ConfiguracionVisualForm = ({ onChange, initialData }: Props) => {
         onChange={handleChange}
       />
 
-      <Grid size={{xs:12}}>
-        <Button variant="outlined" onClick={handleGuardarConfig}>Guardar Configuración</Button>
+      <Grid size={{ xs: 12 }}>
+        <Button variant="outlined" onClick={handleGuardarConfig}>
+          Guardar Configuración
+        </Button>
       </Grid>
     </Grid>
   );

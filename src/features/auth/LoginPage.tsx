@@ -66,7 +66,12 @@ const LoginPage = () => {
           maxWidth: 400,
         }}
       >
-        <Typography variant="h5" align="center" mb={3} color={theme.colors.primary}>
+        <Typography
+          variant="h5"
+          align="center"
+          mb={3}
+          color={theme.colors.primary}
+        >
           Iniciar sesión
         </Typography>
 
@@ -88,13 +93,16 @@ const LoginPage = () => {
             onChange={handleChange}
             margin="normal"
           />
-          <Button
-            type="submit"
-            variant="contained"
-            fullWidth
-            sx={{ mt: 2 }}
-          >
+          <Button type="submit" variant="contained" fullWidth sx={{ mt: 2 }}>
             Iniciar sesión
+          </Button>
+          <Button
+            fullWidth
+            variant="outlined"
+            onClick={() => navigate("/register")}
+            sx={{ mt: 2, color: theme.colors.primary, textTransform: "none" }}
+          >
+            Registro
           </Button>
           {error && (
             <Typography color="error" align="center" mt={2}>

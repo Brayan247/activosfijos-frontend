@@ -3,12 +3,19 @@ import { Grid, Button } from "@mui/material";
 import TextInput from "../../../components/Input/TextInput";
 import { EmpresaFormData } from "../../../types/EmpresaFormData";
 
+interface Errors {
+  ruc?: string;
+  nombreComercial?: string;
+  [key: string]: string | undefined; // para cualquier otro campo
+}
+
 interface DatosEmpresaProps {
   formData: EmpresaFormData;
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleValidarRuc: () => void;
   rucError: string | null;
   validating: boolean;
+  errors: Errors;
 }
 
 const DatosEmpresa = ({
@@ -16,7 +23,8 @@ const DatosEmpresa = ({
   handleChange,
   handleValidarRuc,
   rucError,
-  validating
+  validating,
+  errors,
 }: DatosEmpresaProps) => {
   return (
     <>
@@ -25,8 +33,8 @@ const DatosEmpresa = ({
         placeholder="RUC"
         value={formData.ruc}
         onChange={handleChange}
-        error={!!rucError}
-        helperText={rucError ?? undefined}
+        error={!!rucError || !!errors.ruc}
+        helperText={rucError || errors.ruc}
       />
       <Grid size={{ xs: 12, md: 6 }} alignContent={"center"}>
         <Button
@@ -91,6 +99,8 @@ const DatosEmpresa = ({
         placeholder="Nombre Comercial"
         value={formData.nombreComercial}
         onChange={handleChange}
+        error={!!errors.telefono}
+        helperText={errors.telefono}
       />
     </>
   );
