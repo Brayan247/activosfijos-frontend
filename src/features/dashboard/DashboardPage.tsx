@@ -7,8 +7,20 @@ import { getDashboardData } from "./dashboardService";
 import LogoImage from "../../components/LogoImagen";
 import SectionHeader from "../../components/SectionHeader/SectionHeader";
 import { theme } from "../../style/theme";
+import api from "../../services/axios";
 
-import { Box, Typography, Button, Grid, Paper } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Button,
+  Grid,
+  Paper,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  TextField,
+  DialogActions,
+} from "@mui/material";
 
 interface DashboardDto {
   usuarioId: number;
@@ -35,6 +47,22 @@ const DashboardPage = () => {
   const [error, setError] = useState("");
   const token = useSelector((state: RootState) => state.auth.token);
 
+  const [openModal, setOpenModal] = useState(false);
+  const [formActivo, setFormActivo] = useState({
+    codBarras: "",
+    rubro: "",
+    item: "",
+    denominacion: "",
+    descripcion: "",
+    valorHistorico: "",
+    valorActual: "",
+    tipoVidaUtilId: 0,
+    porcentajeDepreciacion: "",
+  });
+
+  const handleOpenModal = () => setOpenModal(true);
+  const handleCloseModal = () => setOpenModal(false);
+
   useEffect(() => {
     if (!token) {
       navigate("/login");
@@ -54,6 +82,26 @@ const DashboardPage = () => {
 
     fetchData();
   }, [navigate, token]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormActivo((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  const handleSubmitActivo = async (e: React.FormEvent) => {
+    e.preventDefault();
+    // Aquí puedes enviar el formulario con fetch o axios
+    const dataToSend = {
+      ...formActivo,
+      empresaId: data?.empresaId,
+      usuarioId: data?.usuarioId,
+    };
+    await api.post("/activo-fijo/registrar", dataToSend);
+    handleCloseModal();
+  };
 
   const handleLogout = () => {
     navigate("/login");
@@ -139,7 +187,101 @@ const DashboardPage = () => {
           Cerrar sesión
         </Button>
       </Box>
+      <Button
+        variant="contained"
+        onClick={handleOpenModal}
+        sx={{
+          backgroundColor: primaryColor,
+          color: "#fff",
+          fontWeight: "bold",
+          mb: 2,
+          "&:hover": {
+            backgroundColor: primaryColor,
+          },
+        }}
+      >
+        Registrar Activo
+      </Button>
 
+      <Dialog
+        open={openModal}
+        onClose={handleCloseModal}
+        fullWidth
+        maxWidth="md"
+      >
+        <DialogTitle>Registrar nuevo activo</DialogTitle>
+        <form onSubmit={handleSubmitActivo}>
+          <DialogContent
+            sx={{ display: "flex", flexDirection: "column", gap: 2 }}
+          >
+            <TextField
+              name="codBarras"
+              label="Código de barras"
+              fullWidth
+              onChange={handleChange}
+            />
+            <TextField
+              name="rubro"
+              label="Rubro"
+              fullWidth
+              onChange={handleChange}
+            />
+            <TextField
+              name="item"
+              label="Item"
+              fullWidth
+              onChange={handleChange}
+            />
+            <TextField
+              name="denominacion"
+              label="Denominación"
+              fullWidth
+              onChange={handleChange}
+            />
+            <TextField
+              name="descripcion"
+              label="Descripción"
+              fullWidth
+              onChange={handleChange}
+            />
+            <TextField
+              name="valorHistorico"
+              label="Valor histórico"
+              fullWidth
+              onChange={handleChange}
+            />
+            <TextField
+              name="valorActual"
+              label="Valor actual"
+              fullWidth
+              onChange={handleChange}
+            />
+            <TextField
+              name="tipoVidaUtilId"
+              label="Tipo vida útil ID"
+              type="number"
+              fullWidth
+              onChange={handleChange}
+            />
+            <TextField
+              name="porcentajeDepreciacion"
+              label="Porcentaje de depreciación"
+              fullWidth
+              onChange={handleChange}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={handleCloseModal}>Cancelar</Button>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ backgroundColor: primaryColor }}
+            >
+              Registrar
+            </Button>
+          </DialogActions>
+        </form>
+      </Dialog>
       <Grid container spacing={4} size={{ xs: 12, md: 6 }}>
         <Paper sx={{ p: 3, bgcolor: isDark ? "#333" : "#fff" }} elevation={3}>
           <SectionHeader title="Información del usuario" color={primaryColor} />
