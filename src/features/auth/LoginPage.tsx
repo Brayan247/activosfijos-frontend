@@ -5,12 +5,10 @@ import { setToken } from "../../store/slices/authSlice";
 import { setAuthToken } from "../../services/axios";
 
 import { login } from "./authService";
-import TextField from "@mui/material/TextField";
-import Button from "@mui/material/Button";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
+import {Button, Box, Typography, Paper} from "@mui/material"
 import { theme } from "../../style/theme";
+
+import TextInput from "../../components/Input/TextInput";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -76,23 +74,8 @@ const LoginPage = () => {
         </Typography>
 
         <Box component="form" onSubmit={handleSubmit}>
-          <TextField
-            fullWidth
-            label="Usuario"
-            name="username"
-            value={credentials.username}
-            onChange={handleChange}
-            margin="normal"
-          />
-          <TextField
-            fullWidth
-            label="Contraseña"
-            name="password"
-            type="password"
-            value={credentials.password}
-            onChange={handleChange}
-            margin="normal"
-          />
+          <TextInput name="username" onChange={handleChange} value={credentials.username} placeholder="Usuario" />
+          <TextInput name="password" onChange={handleChange} value={credentials.password} placeholder="Contraseña" />
           <Button type="submit" variant="contained" fullWidth sx={{ mt: 2 }}>
             Iniciar sesión
           </Button>

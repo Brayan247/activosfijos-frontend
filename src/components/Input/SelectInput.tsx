@@ -1,5 +1,13 @@
 import React from "react";
-import { FormControl, InputLabel, Select, MenuItem, FormHelperText, SelectChangeEvent, Grid } from "@mui/material";
+import {
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  FormHelperText,
+  SelectChangeEvent,
+  Grid,
+} from "@mui/material";
 
 interface Option {
   value: string | number;
@@ -29,10 +37,27 @@ const SelectInput: React.FC<SelectInputProps> = ({
 }) => {
   return (
     <Grid size={{ xs: 12, md: 6 }}>
-      <FormControl fullWidth margin="normal" error={error} disabled={disabled}>
+      <FormControl
+        fullWidth
+        error={error}
+        disabled={disabled}
+        size="small"
+        margin="dense"
+      >
         {label && <InputLabel>{label}</InputLabel>}
 
-        <Select name={name} value={value} onChange={onChange} label={label}>
+        <Select
+          name={name}
+          value={value}
+          onChange={onChange}
+          label={label}
+          sx={{
+            borderRadius: "8px",
+            height: "40px",
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
           {options.map((option) => (
             <MenuItem key={option.value} value={option.value}>
               {option.label}

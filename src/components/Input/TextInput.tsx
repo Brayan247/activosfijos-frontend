@@ -1,5 +1,5 @@
 import React from "react";
-import {TextField, Grid} from "@mui/material";
+import { TextField, Grid } from "@mui/material";
 
 interface TextInputProps {
   name: string;
@@ -20,7 +20,6 @@ const TextInput = ({
   placeholder,
   value,
   onChange,
-  onBlur,
   required = false,
   disabled = false,
   error = false,
@@ -34,12 +33,23 @@ const TextInput = ({
       label={placeholder}
       value={value}
       onChange={onChange}
-      onBlur={onBlur}
       required={required}
       disabled={disabled}
       error={error}
-      helperText={helperText} 
-      margin="normal"
+      helperText={helperText}
+      size="small"
+      margin="dense"
+      InputProps={{
+        sx: {
+          borderRadius: "8px",
+          height: "40px", // <-- altura total del campo
+        },
+      }}
+      InputLabelProps={{
+        sx: {
+          fontSize: "0.85rem", // opcional, tamaño de label
+        },
+      }}
     />
   </Grid>
 );
