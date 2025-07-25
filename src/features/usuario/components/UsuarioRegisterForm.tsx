@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { Grid, Box, Alert, Typography, SelectChangeEvent } from "@mui/material";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store";
 
 import { useNavigate } from "react-router-dom";
 
@@ -27,6 +29,8 @@ const UsuarioRegisterForm = () => {
     ...initialUsuarioFormData,
     confirmPassword: "",
   });
+
+  const empresaId = useSelector((state: RootState) => state.auth.empresaID);
 
   const [errores, setErrores] = useState<Record<string, string>>({});
   const [error, setError] = useState<string>("");
@@ -150,13 +154,13 @@ const UsuarioRegisterForm = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validarFormulario()) return;
-
     try {
-      const payload = mapFormDataToPayload(formData);
-      payload.empresaId= 1;
-      console.log(payload)
+      const payload = mapFormDataToPayload({
+        ...formData,
+        empresaId,
+      });
       await api.post("/usuario/registrar", payload);
-      navigate("/dashboard");
+      navigate("/login");
     } catch (err: any) {
       const msg = err.response?.data?.mensaje || "Error en el registro.";
       setError(msg);

@@ -1,5 +1,5 @@
 export interface UsuarioFormData {
-  empresaId: number | string;
+  empresaId: number | string | null;
   dni: string;
   nombre: string;
   apellido: string;
