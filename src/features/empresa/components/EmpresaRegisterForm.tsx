@@ -262,6 +262,7 @@ const EmpresaRegisterForm = () => {
           datosConfig?.fuente_personalizada || formData.fuente_personalizada,
       };
       const payload = mapFormDataToPayload(dataToSend);
+      payload.categoria = "prueba"
       const response = await api.post("/empresa/registrar", payload);
       const empresaId = response.data.datos.empresaId;
       if (empresaId) {

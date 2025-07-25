@@ -10,6 +10,8 @@ import SelectInput from "../../../components/Input/SelectInput";
 import PrimaryButton from "../../../components/Button/PrimaryButton";
 import api from "../../../services/axios";
 
+import { esCedulaValidaEcuador, isValidEmail, isValidPhone } from "../../../utils/Helpers";
+
 import {
   UsuarioFormData,
   initialUsuarioFormData,
@@ -128,28 +130,57 @@ const UsuarioRegisterForm = () => {
     setFormData(updatedFormData);
   };
 
-  const validarFormulario = () => {
-    const erroresTemp: Record<string, string> = {};
-    if (!formData.dni) erroresTemp.dni = "El DNI es obligatorio.";
-    if (!formData.nombre) erroresTemp.nombre = "El nombre es obligatorio.";
-    if (!formData.apellido)
-      erroresTemp.apellido = "El apellido es obligatorio.";
-    if (!formData.fechaNacimiento)
-      erroresTemp.fechaNacimiento = "La fecha de nacimiento es obligatoria.";
-    if (!formData.genero) erroresTemp.genero = "El género es obligatorio.";
-    if (!formData.email) erroresTemp.email = "El correo es obligatorio.";
-    if (!formData.username) erroresTemp.username = "El usuario es obligatorio.";
-    if (!formData.password)
-      erroresTemp.password = "La contraseña es obligatoria.";
-    if (!formData.confirmPassword)
-      erroresTemp.confirmPassword = "Confirma la contraseña.";
-    else if (formData.password !== formData.confirmPassword) {
-      erroresTemp.confirmPassword = "Las contraseñas no coinciden.";
-    }
+const validarFormulario = () => {
+  const erroresTemp: Record<string, string> = {};
 
-    setErrores(erroresTemp);
-    return Object.keys(erroresTemp).length === 0;
-  };
+  // DNI / Cédula
+  if (!formData.dni) {
+    erroresTemp.dni = "El DNI es obligatorio.";
+  } else if (!esCedulaValidaEcuador(formData.dni)) {
+    erroresTemp.dni = "La cédula ingresada no es válida.";
+  }
+
+  // Nombre y Apellido
+  if (!formData.nombre) erroresTemp.nombre = "El nombre es obligatorio.";
+  if (!formData.apellido) erroresTemp.apellido = "El apellido es obligatorio.";
+
+  // Fecha de nacimiento
+  if (!formData.fechaNacimiento)
+    erroresTemp.fechaNacimiento = "La fecha de nacimiento es obligatoria.";
+
+  // Género
+  if (!formData.genero) erroresTemp.genero = "El género es obligatorio.";
+
+  // Email
+  if (!formData.email) {
+    erroresTemp.email = "El correo es obligatorio.";
+  } else if (!isValidEmail(formData.email)) {
+    erroresTemp.email = "El correo electrónico no es válido.";
+  }
+
+  // Teléfono (opcional si tienes ese campo)
+  if (formData.telefono && !isValidPhone(formData.telefono)) {
+    erroresTemp.telefono = "El número de teléfono debe tener 10 dígitos.";
+  }
+
+  // Username
+  if (!formData.username)
+    erroresTemp.username = "El nombre de usuario es obligatorio.";
+
+  // Password
+  if (!formData.password)
+    erroresTemp.password = "La contraseña es obligatoria.";
+
+  // Confirmación de contraseña
+  if (!formData.confirmPassword) {
+    erroresTemp.confirmPassword = "Confirma la contraseña.";
+  } else if (formData.password !== formData.confirmPassword) {
+    erroresTemp.confirmPassword = "Las contraseñas no coinciden.";
+  }
+
+  setErrores(erroresTemp);
+  return Object.keys(erroresTemp).length === 0;
+};
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
