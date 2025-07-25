@@ -5,10 +5,11 @@ import { setToken } from "../../store/slices/authSlice";
 import { setAuthToken } from "../../services/axios";
 
 import { login } from "./authService";
-import {Button, Box, Typography, Paper} from "@mui/material"
+import { Box, Stack, Typography, Paper } from "@mui/material";
 import { theme } from "../../style/theme";
 
 import TextInput from "../../components/Input/TextInput";
+import PrimaryButton from "../../components/Button/PrimaryButton";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -49,7 +50,6 @@ const LoginPage = () => {
         alignItems: "center",
         justifyContent: "center",
         backgroundColor: theme.colors.lightBg,
-        color: theme.colors.textLight,
         fontFamily: theme.font.default,
         p: 2,
       }}
@@ -67,31 +67,36 @@ const LoginPage = () => {
         <Typography
           variant="h5"
           align="center"
-          mb={3}
+          mb={1}
+          fontWeight={600}
           color={theme.colors.primary}
         >
           Iniciar sesión
         </Typography>
-
         <Box component="form" onSubmit={handleSubmit}>
-          <TextInput name="username" onChange={handleChange} value={credentials.username} placeholder="Usuario" />
-          <TextInput name="password" onChange={handleChange} value={credentials.password} placeholder="Contraseña" />
-          <Button type="submit" variant="contained" fullWidth sx={{ mt: 2 }}>
-            Iniciar sesión
-          </Button>
-          <Button
-            fullWidth
-            variant="outlined"
-            onClick={() => navigate("/register/empresa")}
-            sx={{ mt: 2, color: theme.colors.primary, textTransform: "none" }}
-          >
-            Registro
-          </Button>
+          <Stack spacing={2}>
+          <TextInput
+            name="username"
+            onChange={handleChange}
+            value={credentials.username}
+            placeholder="Usuario"
+          />
+          <TextInput
+            name="password"
+            onChange={handleChange}
+            value={credentials.password}
+            placeholder="Contraseña"
+          />
           {error && (
             <Typography color="error" align="center" mt={2}>
               {error}
             </Typography>
           )}
+          <PrimaryButton type="submit">Iniciar sesion</PrimaryButton>
+          <PrimaryButton onClick={() => navigate("/register/empresa")} variant="outlined">
+            Registro
+          </PrimaryButton>
+          </Stack>
         </Box>
       </Paper>
     </Box>
