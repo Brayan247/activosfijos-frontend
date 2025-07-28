@@ -1,7 +1,8 @@
-import { Box, Typography, Paper } from "@mui/material";
+import { Box, Typography, Paper, useTheme } from "@mui/material";
 import EmpresaRegisterForm from "./components/EmpresaRegisterForm";
 
 const RegisterEmpresaPage = () => {
+  const theme = useTheme();
   return (
     <Box
       sx={{
@@ -9,8 +10,7 @@ const RegisterEmpresaPage = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        background: "linear-gradient(135deg, #e3f2fd 0%, #f3f4f6 100%)",
-        px: 2,
+        background: theme.palette.background.default,
         py: { xs: 4, md: 8 },
       }}
     >
@@ -21,7 +21,6 @@ const RegisterEmpresaPage = () => {
           maxWidth: 1000,
           p: { xs: 3, md: 6 },
           borderRadius: 4,
-          boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
           transition: "transform 0.3s ease",
           "&:hover": {
             transform: "scale(1.01)",

@@ -1,4 +1,4 @@
-import { Grid, Button } from "@mui/material";
+import { Grid } from "@mui/material";
 
 import TextInput from "../../../components/Input/TextInput";
 import PrimaryButton from "../../../components/Button/PrimaryButton";
