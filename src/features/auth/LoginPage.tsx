@@ -87,6 +87,7 @@ const LoginPage = () => {
             />
             <TextInput
               name="password"
+              type="password"
               onChange={handleChange}
               value={credentials.password}
               placeholder="Contraseña"

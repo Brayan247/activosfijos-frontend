@@ -137,17 +137,12 @@ const DashboardPage = () => {
       </Box>
     );
 
-  const isDark = data?.temaOscuro === true;
-  const backgroundColor = isDark ? theme.palette.background.default : "#f5f5f5";
-  const textColor = isDark ? theme.palette.text.primary : theme.palette.text.secondary;
   const primaryColor = data?.colorPrimario || theme.palette.primary.main;
   const fontFamily = data?.fuentePersonalizada || theme.typography.fontFamily;
 
   return (
     <Box
       sx={{
-        backgroundColor,
-        color: textColor,
         fontFamily,
         minHeight: "100vh",
         p: 4,
@@ -283,7 +278,7 @@ const DashboardPage = () => {
         </form>
       </Dialog>
       <Grid container spacing={4} size={{ xs: 12, md: 6 }}>
-        <Paper sx={{ p: 3, bgcolor: isDark ? "#333" : "#fff" }} elevation={3}>
+        <Paper sx={{ p: 3 }} elevation={3}>
           <SectionHeader title="Información del usuario" color={primaryColor} />
           <Typography>
             <strong>Nombre:</strong> {data?.nombreUsuario}{" "}
@@ -307,7 +302,7 @@ const DashboardPage = () => {
         </Paper>
 
         <Grid container spacing={4} size={{ xs: 12, md: 6 }}>
-          <Paper sx={{ p: 3, bgcolor: isDark ? "#333" : "#fff" }} elevation={3}>
+          <Paper sx={{ p: 3 }} elevation={3}>
             <SectionHeader
               title="Información de la empresa"
               color={primaryColor}
