@@ -1,5 +1,14 @@
 import { useState, useEffect } from "react";
-import { Grid, Alert, Box, SelectChangeEvent, Button } from "@mui/material";
+import {
+  Grid,
+  Alert,
+  Box,
+  SelectChangeEvent,
+  Button,
+  Paper,
+  Divider,
+  Typography,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
 import PrimaryButton from "../../../components/Button/PrimaryButton";
@@ -262,7 +271,7 @@ const EmpresaRegisterForm = () => {
           datosConfig?.fuente_personalizada || formData.fuente_personalizada,
       };
       const payload = mapFormDataToPayload(dataToSend);
-      payload.categoria = "prueba"
+      payload.categoria = "prueba";
       const response = await api.post("/empresa/registrar", payload);
       const empresaId = response.data.datos.empresaId;
       if (empresaId) {
@@ -285,47 +294,96 @@ const EmpresaRegisterForm = () => {
 
   return (
     <form onSubmit={handleSubmit}>
-      <Grid container spacing={2}>
-        <DatosEmpresa
-          formData={formData}
-          handleChange={handleChange}
-          handleValidarRuc={handleValidarRuc}
-          rucError={rucError}
-          validating={validatingRuc}
-          errors={errores}
-        />
-        <DatosContactoGeografico
-          formData={formData}
-          handleChange={handleChange}
-          handleSelectChange={handleSelectChange}
-          paises={paises}
-          provinciaEstados={provinciaEstados}
-          cantones={cantones}
-          ciudadParroquias={ciudadParroquias}
-          errors={errores}
-        />
+      <Grid container spacing={3}>
+        <Grid size={{ xs: 12 }}>
+          <Typography variant="h6" color="primary" gutterBottom>
+            Datos de la Empresa
+          </Typography>
+          <Paper elevation={0} sx={{ p: 3 }}>
+            <Grid container spacing={2}>
+              <DatosEmpresa
+                formData={formData}
+                handleChange={handleChange}
+                handleValidarRuc={handleValidarRuc}
+                rucError={rucError}
+                validating={validatingRuc}
+                errors={errores}
+              />
+            </Grid>
+          </Paper>
+        </Grid>
+
+        {/* Divider */}
+        <Grid size={{ xs: 12 }}>
+          <Divider />
+        </Grid>
+
+        {/* Contacto y ubicación */}
+        <Grid size={{ xs: 12 }}>
+          <Typography variant="h6" color="primary" gutterBottom>
+            Contacto y Ubicación
+          </Typography>
+          <Paper elevation={0} sx={{ p: 3 }}>
+            <Grid container spacing={2}>
+              <DatosContactoGeografico
+                formData={formData}
+                handleChange={handleChange}
+                handleSelectChange={handleSelectChange}
+                paises={paises}
+                provinciaEstados={provinciaEstados}
+                cantones={cantones}
+                ciudadParroquias={ciudadParroquias}
+                errors={errores}
+              />
+            </Grid>
+          </Paper>
+        </Grid>
+
+        {/* Configuración visual */}
+        {formData.showConfigVisual && (
+          <>
+            <Grid size={{ xs: 12 }}>
+              <Divider />
+            </Grid>
+            <Grid size={{ xs: 12 }}>
+              <Typography variant="h6" color="primary" gutterBottom>
+                Configuración Visual
+              </Typography>
+              <Paper elevation={0} sx={{ p: 3 }}>
+                <ConfiguracionVisualForm
+                  onChange={setDatosConfig}
+                  errors={errores}
+                />
+              </Paper>
+            </Grid>
+          </>
+        )}
+
+        {/* Botón para agregar configuración visual */}
+        {!formData.showConfigVisual && (
+          <Grid size={{ xs: 12 }}>
+            <Box textAlign="center">
+              <Button variant="outlined" onClick={showConfiguracionVisual}>
+                Agregar configuración visual
+              </Button>
+            </Box>
+          </Grid>
+        )}
+
+        {/* Error general */}
+        {error && (
+          <Grid size={{ xs: 12 }}>
+            <Alert severity="error">{error}</Alert>
+          </Grid>
+        )}
+
+        {/* Botón de registro */}
+        <Grid size={{ xs: 12 }}>
+          <Box textAlign="center" mt={2}>
+            <PrimaryButton type="submit">Registrar Empresa</PrimaryButton>
+          </Box>
+        </Grid>
       </Grid>
-      {formData.showConfigVisual && (
-        <ConfiguracionVisualForm
-          onChange={(data) => setDatosConfig(data)}
-          errors={errores}
-        />
-      )}
-      {error && (
-        <Box mt={3}>
-          <Alert severity="error">{error}</Alert>
-        </Box>
-      )}
-      {!formData.showConfigVisual && (
-        <Box mt={2}>
-          <Button variant="outlined" onClick={showConfiguracionVisual}>
-            Agregar configuracion visual
-          </Button>
-        </Box>
-      )}
-      <Box mt={4} textAlign="center">
-        <PrimaryButton type="submit">Registrar Empresa</PrimaryButton>
-      </Box>
     </form>
   );
 };

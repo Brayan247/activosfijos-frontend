@@ -1,6 +1,7 @@
 import { Grid, Button } from "@mui/material";
 
 import TextInput from "../../../components/Input/TextInput";
+import PrimaryButton from "../../../components/Button/PrimaryButton";
 import { EmpresaFormData } from "../../../types/EmpresaFormData";
 
 interface Errors {
@@ -37,13 +38,7 @@ const DatosEmpresa = ({
         helperText={rucError || errors.ruc}
       />
       <Grid size={{ xs: 12, md: 6 }} alignContent={"center"}>
-        <Button
-          variant="contained"
-          onClick={handleValidarRuc}
-          disabled={validating}
-        >
-          {validating ? "Validando..." : "Validar RUC"}
-        </Button>
+        <PrimaryButton onClick={handleValidarRuc} disabled={validating}>{validating ? "Validando..." : "Validar ruc"}</PrimaryButton>
       </Grid>
       <TextInput
         name="razonSocial"
