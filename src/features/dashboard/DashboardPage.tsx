@@ -2,11 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
+import { useTheme } from "@mui/material/styles";
 
 import { getDashboardData } from "./dashboardService";
 import LogoImage from "../../components/LogoImagen";
 import SectionHeader from "../../components/SectionHeader/SectionHeader";
-import { theme } from "../../style/theme";
 import api from "../../services/axios";
 
 import {
@@ -41,6 +41,7 @@ interface DashboardDto {
 }
 
 const DashboardPage = () => {
+  const theme = useTheme();
   const navigate = useNavigate();
   const [data, setData] = useState<DashboardDto | null>(null);
   const [loading, setLoading] = useState(true);
@@ -137,11 +138,10 @@ const DashboardPage = () => {
     );
 
   const isDark = data?.temaOscuro === true;
-  const backgroundColor = isDark ? theme.colors.darkBg : "#f5f5f5";
-  const textColor = isDark ? theme.colors.textLight : theme.colors.textDark;
-
-  const primaryColor = data?.colorPrimario || theme.colors.primary;
-  const fontFamily = data?.fuentePersonalizada || theme.font.default;
+  const backgroundColor = isDark ? theme.palette.background.default : "#f5f5f5";
+  const textColor = isDark ? theme.palette.text.primary : theme.palette.text.secondary;
+  const primaryColor = data?.colorPrimario || theme.palette.primary.main;
+  const fontFamily = data?.fuentePersonalizada || theme.typography.fontFamily;
 
   return (
     <Box

@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Grid, Button } from "@mui/material";
+import { Grid, Button, useTheme } from "@mui/material";
 import TextInput from "../../../components/Input/TextInput";
-import { theme } from "../../../style/theme";
+
+
 
 interface ConfiguracionVisual {
   color_primario: string;
@@ -24,9 +25,10 @@ interface Props {
 }
 
 const ConfiguracionVisualForm = ({ onChange, initialData, errors }: Props) => {
+  const theme = useTheme();
   const [formData, setFormData] = useState<ConfiguracionVisual>({
-    color_primario: initialData?.color_primario || theme.colors.primary,
-    color_secundario: initialData?.color_secundario || theme.colors.secondary,
+    color_primario: initialData?.color_primario || theme.palette.background.default,
+    color_secundario: initialData?.color_secundario || theme.palette.primary.main,
     logo_url: initialData?.logo_url || "",
     fuente_personalizada: initialData?.fuente_personalizada || "",
   });

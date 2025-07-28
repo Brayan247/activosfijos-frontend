@@ -1,4 +1,4 @@
-import { theme } from "../style/theme";
+import colors from "../style/colors";
 
 export interface EmpresaFormData {
   ruc: string;
@@ -51,8 +51,8 @@ export const initialFormData: EmpresaFormData = {
   telefono: "",
   email: "",
   sitioWeb: "",
-  color_primario:  theme.colors.primary,
-  color_secundario: theme.colors.secondary,
+  color_primario:  colors.light.background.default,
+  color_secundario: colors.light.primary,
   logo_url: "",
   fuente_personalizada: "",
   disableCanton: true,
