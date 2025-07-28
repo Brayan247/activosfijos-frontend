@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { PrivateRoute } from "./routes/PrivateRoute";
+import MainLayout from "./layouts/MainLayout";
 import Dashboard from "./features/dashboard/DashboardPage";
 import Login from "./features/auth/LoginPage";
 import RegisterEmpresaPage from "./features/empresa/RegisterEmpresaPage ";
@@ -24,14 +25,17 @@ function App() {
               </PrivateRoute>
             }
           />
-          <Route
-            path="/dashboard"
-            element={
-              <PrivateRoute>
-                <Dashboard />
-              </PrivateRoute>
-            }
-          />
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <MainLayout />
+            </PrivateRoute>
+          }
+        >
+          <Route index element={<Dashboard />} />
+          {/* Aquí puedes agregar más rutas tipo dashboard */}
+        </Route>
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </BrowserRouter>
