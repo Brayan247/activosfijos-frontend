@@ -112,7 +112,6 @@ const DashboardPage = () => {
     return (
       <Box
         sx={{
-          height: "100vh",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
@@ -125,7 +124,6 @@ const DashboardPage = () => {
     return (
       <Box
         sx={{
-          height: "100vh",
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
@@ -144,8 +142,6 @@ const DashboardPage = () => {
     <Box
       sx={{
         fontFamily,
-        minHeight: "100vh",
-        p: 4,
         transition: "all 0.3s ease",
       }}
     >
@@ -164,7 +160,7 @@ const DashboardPage = () => {
             variant="h4"
             sx={{ color: primaryColor, ml: 2, fontWeight: "bold" }}
           >
-            Panel principal
+            {data?.nombreComercial}
           </Typography>
         </Box>
         <Button

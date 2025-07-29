@@ -11,13 +11,13 @@ const darkThemeColors = {
 };
 
 const lightThemeColors = {
-  background: { default: "#f8fafc", paper: "#ffffff" },
-  text: { primary: "#0f172a", secondary: "#475569" },
-  primary: "#2563eb",
-  primaryLight: "#3b82f6",
-  success: "#16a34a",
-  error: "#dc2626",
-  divider: "#e2e8f0",
+  background: { default: "#f4f6f8", paper: "#ffffff" },         // Fondo suave y limpio
+  text: { primary: "#1e293b", secondary: "#64748b" },            // Azul grisáceo moderno
+  primary: "#3b82f6",                                           // Azul moderno (coherente con dark)
+  primaryLight: "#93c5fd",                                      // Azul claro suave
+  success: "#10b981",                                           // Verde esmeralda más relajado
+  error: "#ef4444",                                             // Rojo suave
+  divider: "#e5e7eb",                                           // Gris muy claro para divisores
 };
 
 const colors = {

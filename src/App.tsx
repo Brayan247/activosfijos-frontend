@@ -5,13 +5,13 @@ import Dashboard from "./features/dashboard/DashboardPage";
 import Login from "./features/auth/LoginPage";
 import RegisterEmpresaPage from "./features/empresa/RegisterEmpresaPage ";
 import RegisterUsuarioPage from "./features/usuario/RegisterUsuarioPage";
-
-import Header from "./components/Header";
+import NuevaOrdenPage from "./features/ordenes/NuevaOrdenPage";
+import VerificacionOrdenPage from "./features/ordenes/VerificacionOrdenPage";
+import OrdenesAprobadasPage from "./features/ordenes/OrdenesAprobadasPage";
 
 function App() {
   return (
     <>
-      <Header />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Navigate to="/login" replace />} />
@@ -25,17 +25,25 @@ function App() {
               </PrivateRoute>
             }
           />
-        <Route
-          path="/dashboard"
-          element={
-            <PrivateRoute>
-              <MainLayout />
-            </PrivateRoute>
-          }
-        >
-          <Route index element={<Dashboard />} />
-          {/* Aquí puedes agregar más rutas tipo dashboard */}
-        </Route>
+          <Route
+            path="/dashboard"
+            element={
+              <PrivateRoute>
+                <MainLayout />
+              </PrivateRoute>
+            }
+          >
+            <Route index element={<Dashboard />} />
+            <Route path="ordenes/nueva" element={<NuevaOrdenPage />} />
+            <Route
+              path="ordenes/verificacion"
+              element={<VerificacionOrdenPage />}
+            />
+            <Route
+              path="ordenes/aprobadas"
+              element={<OrdenesAprobadasPage />}
+            />
+          </Route>
           <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </BrowserRouter>

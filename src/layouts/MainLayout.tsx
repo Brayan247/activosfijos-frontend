@@ -1,15 +1,16 @@
-import { Box } from "@mui/material";
+import { Box, useTheme } from "@mui/material";
 import Sidebar from "../components/layout/Sidebar";
-import Topbar from "../components/layout/Topbar";
+import Header from "../components/layout/Header";
 import { Outlet } from "react-router-dom";
 
 const MainLayout = () => {
+  const theme = useTheme();
   return (
-    <Box sx={{ display: "flex", height: "100vh", overflow: "hidden" }}>
-      <Sidebar />
-      <Box sx={{ flexGrow: 1, bgcolor: "#0f0f0f", color: "white" }}>
-        <Topbar />
-        <Box sx={{ p: 3, overflowY: "auto", height: "calc(100vh - 64px)" }}>
+    <Box sx={{ height: "100vh", display: "flex", flexDirection: "column" }}>
+      <Header />
+      <Box sx={{ display: "flex", flexGrow: 1, overflow: "hidden" }}>
+        <Sidebar />
+        <Box sx={{ flexGrow: 1, bgcolor: theme.palette.background.paper, color: "white", overflowY: "auto", p: 3 }}>
           <Outlet />
         </Box>
       </Box>
