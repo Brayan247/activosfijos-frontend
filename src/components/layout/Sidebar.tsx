@@ -98,8 +98,8 @@ const Sidebar = () => {
           <List component="div" disablePadding dense>
             <ListItemButton
               sx={{ pl: 4, py: 0.75 }}
-              selected={isActive("/dashboard/ordenes/nueva")}
-              onClick={() => navigate("/dashboard/ordenes/nueva")}
+              selected={isActive("/dashboard/ordenes")}
+              onClick={() => navigate("/dashboard/ordenes")}
             >
               <ListItemIcon sx={{ minWidth: 32, color: theme.palette.text.primary }}>
                 <AddIcon />

@@ -1,5 +1,7 @@
+import React from "react";
 import {
   Box,
+  Button,
   Typography,
   Table,
   TableBody,
@@ -15,7 +17,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 
-const OrdenesAprobadasPage = () => {
+const ListaOrdenesActivos = () => {
   const navigate = useNavigate();
 
   const ordenesPrueba = [
@@ -33,12 +35,12 @@ const OrdenesAprobadasPage = () => {
       tipo: "Mantenimiento",
       fecha: "2025-07-20",
       responsable: "Ana Martínez",
-      estado: "Aprovada",
+      estado: "Rechazada",
     },
   ];
 
   const ordenes = ordenesPrueba.filter((o) =>
-    ["Aprovada"].includes(o.estado)
+    ["Creada", "Rechazada"].includes(o.estado)
   );
 
   return (
@@ -52,6 +54,12 @@ const OrdenesAprobadasPage = () => {
         <Typography variant="h4" component="h1" fontWeight="bold">
           Órdenes de Activos
         </Typography>
+        <Button
+          variant="contained"
+          onClick={() => navigate("/dashboard/ordenes/nueva")}
+        >
+          Registrar Orden
+        </Button>
       </Stack>
 
       <TableContainer
@@ -119,7 +127,10 @@ const OrdenesAprobadasPage = () => {
                       px: 1.5,
                       py: 0.5,
                       borderRadius: 1,
-                      bgcolor:"success.light",
+                      bgcolor:
+                        orden.estado === "Creada"
+                          ? "info.light"
+                          : "error.light",
                       fontWeight: "medium",
                       fontSize: 14,
                       textAlign: "center",
@@ -153,4 +164,4 @@ const OrdenesAprobadasPage = () => {
   );
 };
 
-export default OrdenesAprobadasPage;
+export default ListaOrdenesActivos;
