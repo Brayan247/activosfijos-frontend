@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Button,
@@ -16,32 +16,74 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import { getDashboardData } from "../dashboard/dashboardService";
+import api from "../../services/axios";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store";
+
+interface OrdenActivoDto {
+  ordenId: number;
+  numeroOrden: string;
+  tipoOrden: string;
+  fechaEmision: string; // ISO date string (ej. "2025-07-30T00:00:00")
+  responsable: string;
+  proveedor?: string | null;
+  observaciones?: string | null;
+  estadoOrden: number | string;
+  documentacionAdjunta?: string | null;
+  motivoRechazo?: string | null;
+  activosJson: string; // Este campo puede ser un string (JSON string) o directamente un tipo si se deserializa
+
+  fechaCreacion: string; // ISO date string
+  fechaActualizacion?: string | null;
+
+  empresaId: number;
+  usuarioId: number;
+}
+
+interface EstadoOrdenDto {
+  estado_orden_id: number;
+  nombre: string;
+  activo: boolean;
+}
 
 const ListaOrdenesActivos = () => {
   const navigate = useNavigate();
+  const [ordenes, setOrdenes] = useState<OrdenActivoDto[]>([]);
+  const [estados, setEstados] = useState<EstadoOrdenDto[]>([]);
+  const token = useSelector((state: RootState) => state.auth.token);
 
-  const ordenesPrueba = [
-    {
-      id: 1,
-      numeroOrden: "ORD-001",
-      tipo: "Compra",
-      fecha: "2025-07-15",
-      responsable: "Juan Pérez",
-      estado: "Creada",
-    },
-    {
-      id: 2,
-      numeroOrden: "ORD-002",
-      tipo: "Mantenimiento",
-      fecha: "2025-07-20",
-      responsable: "Ana Martínez",
-      estado: "Rechazada",
-    },
-  ];
+  useEffect(() => {
+    if (!token) {
+      navigate("/login");
+      return;
+    }
 
-  const ordenes = ordenesPrueba.filter((o) =>
-    ["Creada", "Rechazada"].includes(o.estado)
-  );
+    const fetchData = async () => {
+      try {
+        const dashboardData = await getDashboardData();
+        const userID = dashboardData.usuarioId; // aquí usas el dato recién obtenido
+
+        const response = await api.get(
+          `/orden-activos/obtener-ordenes?usuarioId=${userID}`
+        );
+
+        const catalogo = await api.get(`/catalogos/estado-orden`);
+        const catalogos = catalogo.data;
+        setEstados(catalogos);
+
+        const ordenesFiltradas = response.data.datos.filter((o: any) =>
+          [1, 4].includes(Number(o.estadoOrden))
+        );
+
+        setOrdenes(ordenesFiltradas);
+      } catch {
+        throw new Error("No se pudo cargar la información del dashboard.");
+      }
+    };
+
+    fetchData();
+  }, [navigate, token]);
 
   return (
     <Box sx={{ p: 4 }}>
@@ -108,7 +150,7 @@ const ListaOrdenesActivos = () => {
             )}
             {ordenes.map((orden) => (
               <TableRow
-                key={orden.id}
+                key={orden.ordenId}
                 sx={{
                   cursor: "pointer",
                   "&:hover": {
@@ -117,8 +159,17 @@ const ListaOrdenesActivos = () => {
                 }}
               >
                 <TableCell>{orden.numeroOrden}</TableCell>
-                <TableCell>{orden.tipo}</TableCell>
-                <TableCell>{orden.fecha}</TableCell>
+                <TableCell>{orden.tipoOrden}</TableCell>
+                <TableCell>
+                  {" "}
+                  {orden.fechaEmision
+                    ? new Date(orden.fechaEmision).toLocaleDateString("es-EC", {
+                        day: "2-digit",
+                        month: "2-digit",
+                        year: "numeric",
+                      })
+                    : ""}
+                </TableCell>
                 <TableCell>{orden.responsable}</TableCell>
                 <TableCell>
                   <Box
@@ -128,16 +179,17 @@ const ListaOrdenesActivos = () => {
                       py: 0.5,
                       borderRadius: 1,
                       bgcolor:
-                        orden.estado === "Creada"
-                          ? "info.light"
-                          : "error.light",
+                        orden.estadoOrden === 1 ? "info.light" : "error.light",
                       fontWeight: "medium",
                       fontSize: 14,
                       textAlign: "center",
                       minWidth: 90,
                     }}
                   >
-                    {orden.estado}
+                    {estados.find(
+                      (estado) =>
+                        estado.estado_orden_id === Number(orden.estadoOrden)
+                    )?.nombre || "Desconocido"}
                   </Box>
                 </TableCell>
                 <TableCell>
@@ -147,8 +199,9 @@ const ListaOrdenesActivos = () => {
                       size="small"
                       onClick={(e) => {
                         e.stopPropagation();
-                        navigate(`/dashboard/ordenes/${orden.id}`);
-
+                        navigate(`/dashboard/ordenes/${orden.ordenId}`, {
+                          state: { modo: "ver", orden },
+                        });
                       }}
                     >
                       <VisibilityIcon />
