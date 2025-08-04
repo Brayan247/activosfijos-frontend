@@ -7,8 +7,6 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  MenuItem,
-  Select,
   TextField,
   Typography,
   Table,
@@ -19,7 +17,6 @@ import {
   TableRow,
   Paper,
   Stack,
-  InputLabel,
   FormControl,
   SelectChangeEvent,
 } from "@mui/material";
@@ -33,6 +30,12 @@ interface EstadoOrdenDto {
   estado_orden_id: number;
   nombre: string;
   activo: boolean;
+}
+
+interface TipoOrdenDto {
+  tipo_orden_id: number;
+  nombre: string;
+  estado: boolean;
 }
 
 interface Activo {
@@ -97,15 +100,43 @@ const formatDate = (isoDate: string) => {
 const OrdenesActivos: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
-
   const token = useSelector((state: RootState) => state.auth.token);
 
   const orden = location.state?.orden;
-
-  const [dashboardData, setDashboardData] = useState<DashboardDto | null>(null);
   const modoInicial = location.state?.modo === "ver" ? "ver" : "nuevo";
 
+  const [dashboardData, setDashboardData] = useState<DashboardDto | null>(null);
   const [modo, setModo] = useState<"ver" | "nuevo" | "editar">(modoInicial);
+  const [estados, setEstados] = useState<EstadoOrdenDto[]>([]);
+  const [tipoOrden, setTipoOrden] = useState<TipoOrdenDto[]>([]);
+  const [open, setOpen] = useState<boolean>(false);
+  const [step, setStep] = useState<number>(0);
+  const [editIndex, setEditIndex] = useState<number | null>(null);
+  const editable = modo !== "ver";
+
+  const [error, setError] = useState<string | null>(null);
+  const [erroresForm, setErroresForm] = useState<Record<string, string>>({});
+
+  const mapActivos = (rawActivos: any[]): Activo[] => {
+    return rawActivos.map((a) => ({
+      numeroOrden: a.NumeroOrden || "",
+      codigo: a.Codigo || "",
+      descripcion: a.Descripcion || "",
+      marcaModelo: a.MarcaModelo || "",
+      serie: a.Serie || "",
+      estado: a.Estado || "",
+      responsableAsignado: a.ResponsableAsignado || "",
+      fechaAdquisicion: a.FechaAdquisicion || "",
+      valorHistorico: a.ValorHistorico || "",
+      valorActual: a.ValorActual || "",
+      ubicacion: a.Ubicacion || "",
+      fechaBaja: a.FechaBaja || "",
+      observaciones: a.Observaciones || "",
+      empresaId: a.EmpresaId ?? 0,
+      usuarioId: a.UsuarioId ?? 0,
+    }));
+  };
+
   const [formOrden, setFormOrden] = useState<OrdenData>({
     numeroOrden: orden?.numeroOrden || "",
     tipoOrden: orden?.tipoOrden || "",
@@ -125,18 +156,12 @@ const OrdenesActivos: React.FC = () => {
 
   const [activos, setActivos] = useState<Activo[]>(
     typeof orden?.activosJson === "string"
-      ? JSON.parse(orden.activosJson)
-      : orden?.activos || []
+      ? mapActivos(JSON.parse(orden.activosJson))
+      : mapActivos(orden?.activos || [])
   );
 
-  const [estados, setEstados] = useState<EstadoOrdenDto[]>([]);
-
-  const [open, setOpen] = useState<boolean>(false);
-  const [step, setStep] = useState<number>(0);
-  const [editIndex, setEditIndex] = useState<number | null>(null);
-
-  const [formData, setFormData] = useState<Activo>({
-    numeroOrden: "",
+  const [formData, setFormData] = useState<Activo>(() => ({
+    numeroOrden: formOrden.numeroOrden || "",
     codigo: "",
     descripcion: "",
     marcaModelo: "",
@@ -149,24 +174,26 @@ const OrdenesActivos: React.FC = () => {
     ubicacion: "",
     fechaBaja: "",
     observaciones: "",
-    empresaId: dashboardData?.empresaId,
-    usuarioId: dashboardData?.usuarioId,
-  });
-
-  const editable = modo !== "ver";
+    empresaId: dashboardData?.empresaId || 0,
+    usuarioId: dashboardData?.usuarioId || 0,
+  }));
 
   useEffect(() => {
     if (!token) {
       navigate("/login");
       return;
     }
+
     const fetchData = async () => {
       try {
         const dashboardData = await getDashboardData();
         setDashboardData(dashboardData);
+
         const catalogo = await api.get(`/catalogos/estado-orden`);
-        const catalogos = catalogo.data;
-        setEstados(catalogos);
+        setEstados(catalogo.data);
+
+        const tipo = await api.get(`/catalogos/tipo-orden`);
+        setTipoOrden(tipo.data);
       } catch {
         throw new Error("No se pudo cargar la información del dashboard.");
       }
@@ -174,6 +201,20 @@ const OrdenesActivos: React.FC = () => {
 
     fetchData();
   }, [navigate, token]);
+
+  const validarOrden = (): boolean => {
+    const errores: Record<string, string> = {};
+    if (!formOrden.numeroOrden.trim())
+      errores.numeroOrden = "Campo obligatorio";
+    if (!formOrden.tipoOrden.trim()) errores.tipoOrden = "Campo obligatorio";
+    if (!formOrden.fechaEmision.trim())
+      errores.fechaEmision = "Campo obligatorio";
+    if (!formOrden.responsable.trim())
+      errores.responsable = "Campo obligatorio";
+
+    setErroresForm(errores);
+    return Object.keys(errores).length === 0;
+  };
 
   const validarStepActual = () => {
     switch (step) {
@@ -201,11 +242,8 @@ const OrdenesActivos: React.FC = () => {
       | ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
       | SelectChangeEvent<any>
   ) => {
-    if (!editable) return;
-
     const { name, id, value } = e.target as any;
     const key = name || id;
-
     const parsedValue = key === "estadoOrden" ? Number(value) : value;
 
     setFormOrden((prev) => ({
@@ -215,8 +253,8 @@ const OrdenesActivos: React.FC = () => {
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
     if (!editable) return;
+    const { id, value } = e.target;
     setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
@@ -272,55 +310,83 @@ const OrdenesActivos: React.FC = () => {
     }
   };
 
-  const validarFormularioCompleto = () => {
-    const camposRequeridos = [
-      "numeroOrden",
-      "tipoOrden",
-      "fecha",
-      "responsable",
-    ];
-
-    for (const campo of camposRequeridos) {
-      const valor = formOrden[campo as keyof typeof formOrden];
-      if (
-        valor === undefined ||
-        valor === null ||
-        valor.toString().trim() === ""
-      ) {
-        return false;
-      }
-    }
-    return true;
-  };
-
   const handleGuardarOrden = async () => {
+    setError(null);
+    if (!editable) return;
+    if (!validarOrden()) {
+      setError("Por favor, completa todos los campos obligatorios.");
+      return;
+    }
+
     try {
-      if (!editable) return;
-      const ordenAEnviar = {
+      const payload = {
         ...formOrden,
         activosJson: activos,
         estadoOrden: 1,
         empresaId: dashboardData?.empresaId,
-        usuarioId: dashboardData?.usuarioId 
+        usuarioId: dashboardData?.usuarioId,
       };
-      const payload = ordenAEnviar;
-      console.log(payload)
-      const response = await api.post("/orden-activos/registrar", payload);
-      console.log(response);
+      await api.post("/orden-activos/registrar", payload);
+      navigate(-1);
     } catch (err: any) {
-      throw new Error(err.response?.data?.mensaje);
+      setError(err.response?.data?.mensaje || "Error al guardar la orden.");
     }
   };
 
-  const handleEnviarVerificacion = () => {
-    if (!editable) return;
-    const ordenAEnviar = {
-      ...formOrden,
-      activosJson: activos,
+  const handleEnviarVerificacion = async () => {
+    const payload = {
+      numeroOrden: formOrden.numeroOrden,
       estadoOrden: 2,
+      motivoRechazo: formOrden.motivoRechazo || null,
     };
-    console.log(ordenAEnviar);
-    alert("Orden enviada a verificación");
+
+    try {
+      await api.put("/orden-activos/actualizar-estado", payload);
+      navigate(-1);
+    } catch (err: any) {
+      console.error(err);
+      alert(
+        err.response?.data?.mensaje || "Error al enviar la orden a verificación"
+      );
+    }
+  };
+
+  const handleRechazarOrden = async () => {
+    const errores: Record<string, string> = {};
+    if (!formOrden.motivoRechazo?.trim()) {
+      errores.motivoRechazo = "Campo obligatorio";
+      setErroresForm(errores);
+      return;
+    }
+    const payload = {
+      numeroOrden: formOrden.numeroOrden,
+      estadoOrden: 4,
+      motivoRechazo: formOrden.motivoRechazo || null,
+    };
+
+    try {
+      await api.put("/orden-activos/actualizar-estado", payload);
+      navigate(-1);
+    } catch (err: any) {
+      console.error(err);
+      alert(err.response?.data?.mensaje || "Error al erechazar la orden");
+    }
+  };
+
+  const handleAprovarOrden = async () => {
+    const payload = {
+      numeroOrden: formOrden.numeroOrden,
+      estadoOrden: 3,
+      motivoRechazo: formOrden.motivoRechazo || null,
+    };
+
+    try {
+      await api.put("/orden-activos/actualizar-estado", payload);
+      navigate(-1);
+    } catch (err: any) {
+      console.error(err);
+      alert(err.response?.data?.mensaje || "Error al aprovar la orden");
+    }
   };
 
   return (
@@ -341,29 +407,28 @@ const OrdenesActivos: React.FC = () => {
           gridTemplateColumns={{ xs: "1fr", sm: "1fr 1fr" }}
         >
           <TextField
-            id="numeroOrden"
+            name="numeroOrden"
             label="Número de Orden"
             value={formOrden.numeroOrden}
             onChange={handleOrdenChange}
             required
+            error={!!erroresForm.numeroOrden}
+            helperText={erroresForm.numeroOrden}
             disabled={!editable}
           />
-          <FormControl disabled={!editable}>
-            <InputLabel id="tipoOrden-label">Tipo de Orden</InputLabel>
-            <Select
-              labelId="tipoOrden-label"
-              id="tipoOrden"
-              value={formOrden.tipoOrden}
-              onChange={handleOrdenChange}
-              label="Tipo de Orden"
-              required
-            >
-              <MenuItem value="Compra">Compra</MenuItem>
-              <MenuItem value="Mantenimiento">Mantenimiento</MenuItem>
-              <MenuItem value="Traslado">Traslado</MenuItem>
-              <MenuItem value="Baja">Baja</MenuItem>
-            </Select>
-          </FormControl>
+          <SelectInput
+            name="tipoOrden"
+            label="Tipo de Orden"
+            value={formOrden.tipoOrden}
+            onChange={handleOrdenChange}
+            options={tipoOrden.map((p) => ({
+              value: p.nombre,
+              label: p.nombre || "",
+            }))}
+            error={!!erroresForm.tipoOrden}
+            helperText={erroresForm.tipoOrden}
+            disabled={!editable}
+          />
           <TextField
             name="fechaEmision"
             label="Fecha de Emisión"
@@ -372,30 +437,45 @@ const OrdenesActivos: React.FC = () => {
             onChange={handleOrdenChange}
             InputLabelProps={{ shrink: true }}
             required
+            error={!!erroresForm.fechaEmision}
+            helperText={erroresForm.fechaEmision}
             disabled={!editable}
           />
           <TextField
-            id="responsable"
+            name="responsable"
             label="Responsable"
             value={formOrden.responsable}
             onChange={handleOrdenChange}
+            error={!!erroresForm.responsable}
+            helperText={erroresForm.responsable}
             required
             disabled={!editable}
           />
           {(modo === "ver" || modo === "editar") && (
-            <FormControl>
-              <SelectInput
-                name="paisId"
-                label="Estado Orden"
-                value={formOrden.estadoOrden ?? 0}
+            <>
+              <FormControl>
+                <SelectInput
+                  name="estadoOrden"
+                  label="Estado Orden"
+                  value={formOrden.estadoOrden ?? 0}
+                  onChange={handleOrdenChange}
+                  options={estados.map((p) => ({
+                    value: p.estado_orden_id,
+                    label: p.nombre || "",
+                  }))}
+                  disabled={true}
+                />
+              </FormControl>
+              <TextField
+                name="motivoRechazo"
+                label="Motivo de Rechazo"
+                value={formOrden.motivoRechazo || ""}
                 onChange={handleOrdenChange}
-                options={estados.map((p) => ({
-                  value: p.estado_orden_id,
-                  label: p.nombre || "",
-                }))}
-                disabled={true}
+                error={!!erroresForm.motivoRechazo}
+                helperText={erroresForm.motivoRechazo}
+                disabled={orden?.estadoOrden === 4}
               />
-            </FormControl>
+            </>
           )}
         </Box>
       </Box>
@@ -655,6 +735,14 @@ const OrdenesActivos: React.FC = () => {
         </DialogActions>
       </Dialog>
 
+      {error && (
+        <Box mt={4}>
+          <Typography color="error" align="center" fontWeight="bold">
+            {error}
+          </Typography>
+        </Box>
+      )}
+
       {editable && (
         <Stack
           direction="row"
@@ -669,32 +757,85 @@ const OrdenesActivos: React.FC = () => {
           >
             Cancelar
           </Button>
+          {modo === "nuevo" && (
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={handleGuardarOrden}
+            >
+              Guardar
+            </Button>
+          )}
+        </Stack>
+      )}
+      {modo === "ver" && formOrden.estadoOrden === 2 && (
+        <Stack
+          direction="row"
+          justifyContent="flex-end"
+          sx={{ mt: 3 }}
+          spacing={1}
+        >
           <Button
-            variant="contained"
-            color="secondary"
-            onClick={handleGuardarOrden}
+            variant="outlined"
+            color="primary"
+            onClick={() => navigate(-1)}
           >
-            Guardar
+            Cancelar
           </Button>
           <Button
             variant="contained"
-            color="warning"
-            onClick={handleEnviarVerificacion}
+            color="error"
+            onClick={handleRechazarOrden}
           >
-            Enviar a verificación
+            Rechazar
+          </Button>
+          <Button
+            variant="contained"
+            color="success"
+            onClick={handleAprovarOrden}
+          >
+            Aprobar
           </Button>
         </Stack>
       )}
-
       {modo === "ver" &&
         (formOrden.estadoOrden === 1 || formOrden.estadoOrden === 4) && (
-          <Stack direction="row" justifyContent="flex-end" sx={{ mt: 3 }}>
+          <Stack
+            direction="row"
+            justifyContent="flex-end"
+            sx={{ mt: 3 }}
+            spacing={1}
+          >
             <Button
               variant="contained"
               color="primary"
               onClick={() => setModo("editar")}
             >
               Editar
+            </Button>
+            <Button
+              variant="contained"
+              color="warning"
+              onClick={handleEnviarVerificacion}
+            >
+              Enviar a verificación
+            </Button>
+          </Stack>
+        )}
+      {modo === "ver" &&
+        (formOrden.estadoOrden === 3) && (
+          <Stack
+            direction="row"
+            justifyContent="flex-end"
+            sx={{ mt: 3 }}
+            spacing={1}
+          >
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => navigate(-1)}
+            >
+              Regresar
             </Button>
           </Stack>
         )}
