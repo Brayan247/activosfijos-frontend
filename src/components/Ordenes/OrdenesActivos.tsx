@@ -24,7 +24,6 @@ import api from "../../services/axios";
 import SelectInput from "../Input/SelectInput";
 import { useSelector } from "react-redux";
 import { RootState } from "../../store";
-import { getDashboardData } from "../../features/dashboard/dashboardService";
 
 interface EstadoOrdenDto {
   estado_orden_id: number;
@@ -70,24 +69,6 @@ interface OrdenData {
   empresaId?: number;
 }
 
-interface DashboardDto {
-  usuarioId: number;
-  nombreUsuario: string;
-  apellidoUsuario: string;
-  rolId: number;
-  idiomaPreferido: string;
-  username: string;
-  ultimoLogin: string | null;
-  ipUltimoLogin: string | null;
-  empresaId: number;
-  nombreComercial: string;
-  colorPrimario?: string;
-  colorSecundario?: string;
-  logoUrl?: string;
-  temaOscuro?: boolean;
-  fuentePersonalizada?: string;
-}
-
 const formatDate = (isoDate: string) => {
   const date = new Date(isoDate);
   return date.toLocaleDateString("es-PE", {
@@ -101,11 +82,11 @@ const OrdenesActivos: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const token = useSelector((state: RootState) => state.auth.token);
+  const dashboardData = useSelector((state: RootState) => state.dashboard.data);
 
   const orden = location.state?.orden;
   const modoInicial = location.state?.modo === "ver" ? "ver" : "nuevo";
 
-  const [dashboardData, setDashboardData] = useState<DashboardDto | null>(null);
   const [modo, setModo] = useState<"ver" | "nuevo" | "editar">(modoInicial);
   const [estados, setEstados] = useState<EstadoOrdenDto[]>([]);
   const [tipoOrden, setTipoOrden] = useState<TipoOrdenDto[]>([]);
@@ -186,9 +167,6 @@ const OrdenesActivos: React.FC = () => {
 
     const fetchData = async () => {
       try {
-        const dashboardData = await getDashboardData();
-        setDashboardData(dashboardData);
-
         const catalogo = await api.get(`/catalogos/estado-orden`);
         setEstados(catalogo.data);
 
