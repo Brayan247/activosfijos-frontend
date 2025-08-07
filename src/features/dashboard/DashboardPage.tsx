@@ -7,19 +7,13 @@ import { useTheme } from "@mui/material/styles";
 import { getDashboardData } from "./dashboardService";
 import LogoImage from "../../components/LogoImagen";
 import SectionHeader from "../../components/SectionHeader/SectionHeader";
-import api from "../../services/axios";
 
 import {
   Box,
   Typography,
-  Button,
   Grid,
   Paper,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  TextField,
-  DialogActions,
+  CircularProgress,
 } from "@mui/material";
 
 interface DashboardDto {
@@ -48,22 +42,6 @@ const DashboardPage = () => {
   const [error, setError] = useState("");
   const token = useSelector((state: RootState) => state.auth.token);
 
-  const [openModal, setOpenModal] = useState(false);
-  const [formActivo, setFormActivo] = useState({
-    codBarras: "",
-    rubro: "",
-    item: "",
-    denominacion: "",
-    descripcion: "",
-    valorHistorico: "",
-    valorActual: "",
-    tipoVidaUtilId: 0,
-    porcentajeDepreciacion: "",
-  });
-
-  const handleOpenModal = () => setOpenModal(true);
-  const handleCloseModal = () => setOpenModal(false);
-
   useEffect(() => {
     if (!token) {
       navigate("/login");
@@ -84,231 +62,65 @@ const DashboardPage = () => {
     fetchData();
   }, [navigate, token]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormActivo((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
 
-  const handleSubmitActivo = async (e: React.FormEvent) => {
-    e.preventDefault();
-    // Aquí puedes enviar el formulario con fetch o axios
-    const dataToSend = {
-      ...formActivo,
-      empresaId: data?.empresaId,
-      usuarioId: data?.usuarioId,
-    };
-    await api.post("/activo-fijo/registrar", dataToSend);
-    handleCloseModal();
-  };
-
-  const handleLogout = () => {
-    navigate("/login");
-  };
+  theme.palette.primary.main = data?.colorPrimario || theme.palette.primary.main;
+  theme.typography.fontFamily = data?.fuentePersonalizada || theme.typography.fontFamily;
 
   if (loading)
     return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Typography variant="h6">Cargando datos...</Typography>
+      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+        <CircularProgress />
       </Box>
     );
+
   if (error)
     return (
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
+      <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
         <Typography variant="h6" color="error">
           {error}
         </Typography>
       </Box>
     );
 
-  const primaryColor = data?.colorPrimario || theme.palette.primary.main;
-  const fontFamily = data?.fuentePersonalizada || theme.typography.fontFamily;
-
   return (
-    <Box
-      sx={{
-        fontFamily,
-        transition: "all 0.3s ease",
-      }}
-    >
+    <Box fontFamily={theme.typography.fontFamily} px={3} py={4}>
+      {/* Header */}
       <Box
         component="header"
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          mb: 4,
-        }}
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        mb={4}
       >
-        <Box sx={{ display: "flex", alignItems: "center" }}>
+        <Box display="flex" alignItems="center">
           <LogoImage src={data?.logoUrl} alt="Logo empresa" />
           <Typography
             variant="h4"
-            sx={{ color: primaryColor, ml: 2, fontWeight: "bold" }}
+            sx={{ color: theme.palette.primary.main, ml: 2, fontWeight: "bold" }}
           >
             {data?.nombreComercial}
           </Typography>
         </Box>
-        <Button
-          variant="contained"
-          onClick={handleLogout}
-          sx={{
-            backgroundColor: primaryColor,
-            color: "#fff",
-            fontWeight: "bold",
-            "&:hover": {
-              backgroundColor: primaryColor,
-            },
-          }}
-        >
-          Cerrar sesión
-        </Button>
       </Box>
-      <Button
-        variant="contained"
-        onClick={handleOpenModal}
-        sx={{
-          backgroundColor: primaryColor,
-          color: "#fff",
-          fontWeight: "bold",
-          mb: 2,
-          "&:hover": {
-            backgroundColor: primaryColor,
-          },
-        }}
-      >
-        Registrar Activo
-      </Button>
 
-      <Dialog
-        open={openModal}
-        onClose={handleCloseModal}
-        fullWidth
-        maxWidth="md"
-      >
-        <DialogTitle>Registrar nuevo activo</DialogTitle>
-        <form onSubmit={handleSubmitActivo}>
-          <DialogContent
-            sx={{ display: "flex", flexDirection: "column", gap: 2 }}
-          >
-            <TextField
-              name="codBarras"
-              label="Código de barras"
-              fullWidth
-              onChange={handleChange}
-            />
-            <TextField
-              name="rubro"
-              label="Rubro"
-              fullWidth
-              onChange={handleChange}
-            />
-            <TextField
-              name="item"
-              label="Item"
-              fullWidth
-              onChange={handleChange}
-            />
-            <TextField
-              name="denominacion"
-              label="Denominación"
-              fullWidth
-              onChange={handleChange}
-            />
-            <TextField
-              name="descripcion"
-              label="Descripción"
-              fullWidth
-              onChange={handleChange}
-            />
-            <TextField
-              name="valorHistorico"
-              label="Valor histórico"
-              fullWidth
-              onChange={handleChange}
-            />
-            <TextField
-              name="valorActual"
-              label="Valor actual"
-              fullWidth
-              onChange={handleChange}
-            />
-            <TextField
-              name="tipoVidaUtilId"
-              label="Tipo vida útil ID"
-              type="number"
-              fullWidth
-              onChange={handleChange}
-            />
-            <TextField
-              name="porcentajeDepreciacion"
-              label="Porcentaje de depreciación"
-              fullWidth
-              onChange={handleChange}
-            />
-          </DialogContent>
-          <DialogActions>
-            <Button onClick={handleCloseModal}>Cancelar</Button>
-            <Button
-              type="submit"
-              variant="contained"
-              sx={{ backgroundColor: primaryColor }}
-            >
-              Registrar
-            </Button>
-          </DialogActions>
-        </form>
-      </Dialog>
-      <Grid container spacing={4} size={{ xs: 12, md: 6 }}>
-        <Paper sx={{ p: 3 }} elevation={3}>
-          <SectionHeader title="Información del usuario" color={primaryColor} />
-          <Typography>
-            <strong>Nombre:</strong> {data?.nombreUsuario}{" "}
-            {data?.apellidoUsuario}
-          </Typography>
-          <Typography>
-            <strong>Usuario:</strong> {data?.username}
-          </Typography>
-          <Typography>
-            <strong>Rol ID:</strong> {data?.rolId}
-          </Typography>
-          <Typography>
-            <strong>Idioma:</strong> {data?.idiomaPreferido}
-          </Typography>
-          <Typography>
-            <strong>Último login:</strong> {data?.ultimoLogin || "Nunca"}
-          </Typography>
-          <Typography>
-            <strong>IP:</strong> {data?.ipUltimoLogin || "No disponible"}
-          </Typography>
-        </Paper>
-
-        <Grid container spacing={4} size={{ xs: 12, md: 6 }}>
+      <Grid container spacing={4}>
+        <Grid size={{xs:12, md:6}}>
           <Paper sx={{ p: 3 }} elevation={3}>
-            <SectionHeader
-              title="Información de la empresa"
-              color={primaryColor}
-            />
-            <Typography>
-              <strong>Nombre comercial:</strong> {data?.nombreComercial}
-            </Typography>
-            <Typography>
-              <strong>ID Empresa:</strong> {data?.empresaId}
-            </Typography>
+            <SectionHeader title="Información del usuario" color={theme.palette.primary.main} />
+            <Typography><strong>Nombre:</strong> {data?.nombreUsuario} {data?.apellidoUsuario}</Typography>
+            <Typography><strong>Usuario:</strong> {data?.username}</Typography>
+            <Typography><strong>Rol:</strong> {data?.rolId}</Typography>
+            <Typography><strong>Idioma:</strong> {data?.idiomaPreferido}</Typography>
+            <Typography><strong>Último login:</strong> {data?.ultimoLogin || "Nunca"}</Typography>
+            <Typography><strong>IP:</strong> {data?.ipUltimoLogin || "No disponible"}</Typography>
+          </Paper>
+        </Grid>
+
+        <Grid size={{xs:12, md:6}}>
+          <Paper sx={{ p: 3 }} elevation={3}>
+            <SectionHeader title="Información de la empresa" color={theme.palette.primary.main} />
+            <Typography><strong>Nombre comercial:</strong> {data?.nombreComercial}</Typography>
+            <Typography><strong>ID Empresa:</strong> {data?.empresaId}</Typography>
           </Paper>
         </Grid>
       </Grid>

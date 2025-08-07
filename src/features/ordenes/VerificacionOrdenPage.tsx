@@ -61,10 +61,10 @@ const ListaOrdenesActivos = () => {
     const fetchData = async () => {
       try {
         const dashboardData = await getDashboardData();
-        const userID = dashboardData.usuarioId; // aquí usas el dato recién obtenido
+        const empresaId = dashboardData.empresaId; // aquí usas el dato recién obtenido
 
         const response = await api.get(
-          `/orden-activos/obtener-ordenes?usuarioId=${userID}`
+          `/orden-activos/obtener-ordenes-empresa?empresaId=${empresaId}`
         );
 
         const catalogo = await api.get(`/catalogos/estado-orden`);

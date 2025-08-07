@@ -466,15 +466,19 @@ const OrdenesActivos: React.FC = () => {
                   disabled={true}
                 />
               </FormControl>
-              <TextField
-                name="motivoRechazo"
-                label="Motivo de Rechazo"
-                value={formOrden.motivoRechazo || ""}
-                onChange={handleOrdenChange}
-                error={!!erroresForm.motivoRechazo}
-                helperText={erroresForm.motivoRechazo}
-                disabled={orden?.estadoOrden === 4}
-              />
+              {!(
+                formOrden.estadoOrden === 1 || formOrden.estadoOrden === 3
+              ) && (
+                <TextField
+                  name="motivoRechazo"
+                  label="Motivo de Rechazo"
+                  value={formOrden.motivoRechazo || ""}
+                  onChange={handleOrdenChange}
+                  error={!!erroresForm.motivoRechazo}
+                  helperText={erroresForm.motivoRechazo}
+                  disabled={orden?.estadoOrden === 4}
+                />
+              )}
             </>
           )}
         </Box>
@@ -757,6 +761,13 @@ const OrdenesActivos: React.FC = () => {
           >
             Cancelar
           </Button>
+          <Button
+            variant="contained"
+            color="warning"
+            onClick={handleEnviarVerificacion}
+          >
+            Enviar a verificación
+          </Button>
           {modo === "nuevo" && (
             <Button
               variant="outlined"
@@ -807,38 +818,48 @@ const OrdenesActivos: React.FC = () => {
             spacing={1}
           >
             <Button
-              variant="contained"
-              color="primary"
-              onClick={() => setModo("editar")}
-            >
-              Editar
-            </Button>
-            <Button
-              variant="contained"
-              color="warning"
-              onClick={handleEnviarVerificacion}
-            >
-              Enviar a verificación
-            </Button>
-          </Stack>
-        )}
-      {modo === "ver" &&
-        (formOrden.estadoOrden === 3) && (
-          <Stack
-            direction="row"
-            justifyContent="flex-end"
-            sx={{ mt: 3 }}
-            spacing={1}
-          >
-            <Button
-              variant="contained"
+              variant="outlined"
               color="primary"
               onClick={() => navigate(-1)}
             >
               Regresar
             </Button>
+            {dashboardData?.usuarioId === orden.usuarioId && (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={() => setModo("editar")}
+              >
+                Editar
+              </Button>
+            )}
+            {formOrden.estadoOrden === 1 && (
+              <Button
+                variant="contained"
+                color="warning"
+                onClick={handleEnviarVerificacion}
+              >
+                Enviar a verificación
+              </Button>
+            )}
           </Stack>
         )}
+      {modo === "ver" && formOrden.estadoOrden === 3 && (
+        <Stack
+          direction="row"
+          justifyContent="flex-end"
+          sx={{ mt: 3 }}
+          spacing={1}
+        >
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => navigate(-1)}
+          >
+            Regresar
+          </Button>
+        </Stack>
+      )}
     </Box>
   );
 };

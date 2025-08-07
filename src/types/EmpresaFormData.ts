@@ -37,7 +37,7 @@ export const initialFormData: EmpresaFormData = {
   actividadEconomicaPrincipal: "",
   tipoContribuyente: "",
   regimen: "",
-  categoria: "prueba",
+  categoria: "",
   fechaInicioActividades: "",
   nombreComercial: "",
   paisId: 55,

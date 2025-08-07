@@ -31,7 +31,6 @@ import {
 import {
   isValidEmail,
   isValidPhone,
-  isValidURL,
   isValidHexColor,
 } from "../../../utils/Helpers";
 
@@ -223,15 +222,6 @@ const EmpresaRegisterForm = () => {
       newErrors.email = "El correo electrónico es obligatorio.";
     } else if (!isValidEmail(formData.email)) {
       newErrors.email = "El correo electrónico no es válido.";
-    }
-
-    if (formData.sitioWeb && !isValidURL(formData.sitioWeb)) {
-      newErrors.sitioWeb = "La URL del sitio web no es válida.";
-    }
-
-    // Validaciones de datosConfig (logo, colores)
-    if (datosConfig?.logo_url && !isValidURL(datosConfig.logo_url)) {
-      newErrors.logo_url = "La URL del logo es inválida.";
     }
 
     if (

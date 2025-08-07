@@ -95,8 +95,6 @@ function validateModulo11(base: string, digito: number): boolean {
 export const isValidPhone = (phone: string) => /^\d{10}$/.test(phone);
 export const isValidEmail = (email: string) =>
   /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-export const isValidURL = (url: string) =>
-  /^(https?:\/\/)?([\w.-]+)+(:\d+)?(\/[\w.-]*)*\/?$/.test(url);
 export const isValidHexColor = (color: string) =>
   /^#([0-9A-F]{3}){1,2}$/i.test(color);
 
