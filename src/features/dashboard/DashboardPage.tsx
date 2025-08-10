@@ -8,10 +8,10 @@ import { useDispatch } from "react-redux";
 import { useTheme } from "@mui/material/styles";
 
 import { getDashboardData } from "./dashboardService";
-import LogoImage from "../../components/LogoImagen";
-import SectionHeader from "../../components/SectionHeader/SectionHeader";
 
-import { Box, Typography, Grid, Paper, CircularProgress } from "@mui/material";
+import ActivoFijoForm from "../activoFijo/ActivoFijoForm";
+
+import { Box, Typography, CircularProgress } from "@mui/material";
 import { setDashboardData } from "../../store/slices/dashboardSlice";
 
 const DashboardPage = () => {
@@ -78,74 +78,8 @@ const DashboardPage = () => {
     );
 
   return (
-    <Box fontFamily={theme.typography.fontFamily} px={3} py={4}>
-      {/* Header */}
-      <Box
-        component="header"
-        display="flex"
-        justifyContent="space-between"
-        alignItems="center"
-        mb={4}
-      >
-        <Box display="flex" alignItems="center">
-          <LogoImage src={data?.logoUrl} alt="Logo empresa" />
-          <Typography
-            variant="h4"
-            sx={{
-              color: theme.palette.primary.main,
-              ml: 2,
-              fontWeight: "bold",
-            }}
-          >
-            {data?.nombreComercial}
-          </Typography>
-        </Box>
-      </Box>
-
-      <Grid container spacing={4}>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <Paper sx={{ p: 3 }} elevation={3}>
-            <SectionHeader
-              title="Información del usuario"
-              color={theme.palette.primary.main}
-            />
-            <Typography>
-              <strong>Nombre:</strong> {data?.nombreUsuario}{" "}
-              {data?.apellidoUsuario}
-            </Typography>
-            <Typography>
-              <strong>Usuario:</strong> {data?.username}
-            </Typography>
-            <Typography>
-              <strong>Rol:</strong> {data?.rolId}
-            </Typography>
-            <Typography>
-              <strong>Idioma:</strong> {data?.idiomaPreferido}
-            </Typography>
-            <Typography>
-              <strong>Último login:</strong> {data?.ultimoLogin || "Nunca"}
-            </Typography>
-            <Typography>
-              <strong>IP:</strong> {data?.ipUltimoLogin || "No disponible"}
-            </Typography>
-          </Paper>
-        </Grid>
-
-        <Grid size={{ xs: 12, md: 6 }}>
-          <Paper sx={{ p: 3 }} elevation={3}>
-            <SectionHeader
-              title="Información de la empresa"
-              color={theme.palette.primary.main}
-            />
-            <Typography>
-              <strong>Nombre comercial:</strong> {data?.nombreComercial}
-            </Typography>
-            <Typography>
-              <strong>ID Empresa:</strong> {data?.empresaId}
-            </Typography>
-          </Paper>
-        </Grid>
-      </Grid>
+    <Box fontFamily={theme.typography.fontFamily} p={2}>
+      <ActivoFijoForm />
     </Box>
   );
 };
