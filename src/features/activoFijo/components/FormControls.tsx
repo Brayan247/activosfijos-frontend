@@ -7,7 +7,8 @@ import {
   MenuItem,
   SelectChangeEvent,
   OutlinedInput,
-  SelectProps
+  SelectProps,
+  Typography,
 } from "@mui/material";
 
 interface FTextFieldProps {
@@ -21,6 +22,9 @@ interface FTextFieldProps {
   inputProps?: any;
   multiline?: boolean;
   minRows?: number;
+  disabled?: boolean;
+  error?: boolean;
+  helperText?: string;
 }
 
 export const FTextField: React.FC<FTextFieldProps> = ({
@@ -34,6 +38,9 @@ export const FTextField: React.FC<FTextFieldProps> = ({
   inputProps,
   multiline = false,
   minRows,
+  disabled,
+  error = false,
+  helperText = "",
 }) => {
   return (
     <TextField
@@ -48,6 +55,9 @@ export const FTextField: React.FC<FTextFieldProps> = ({
       inputProps={inputProps}
       multiline={multiline}
       minRows={minRows}
+      disabled={disabled}
+      error={error}
+      helperText={helperText}
     />
   );
 };
@@ -60,7 +70,9 @@ interface FSelectProps {
   options: string[] | { label: string; value: any }[];
   required?: boolean;
   inputLabelId?: string;
-  input?: SelectProps['input'];
+  input?: SelectProps["input"];
+  error?: boolean;
+  helperText?: string;
 }
 
 export const FSelect: React.FC<FSelectProps> = ({
@@ -72,13 +84,15 @@ export const FSelect: React.FC<FSelectProps> = ({
   required = false,
   inputLabelId,
   input,
+  error = false,
+  helperText = "",
 }) => {
   const handleChange = (e: SelectChangeEvent<any>) => {
     onChange && onChange(name, e.target.value);
   };
 
   return (
-    <FormControl fullWidth required={required}>
+    <FormControl fullWidth required={required} error={error}>
       <InputLabel id={inputLabelId}>{label}</InputLabel>
       <Select
         labelId={inputLabelId}
@@ -88,11 +102,12 @@ export const FSelect: React.FC<FSelectProps> = ({
         input={input ?? <OutlinedInput label={label} />}
       >
         {options.map((opt: any, idx: number) => {
-          if (typeof opt === "string") return (
-            <MenuItem key={idx} value={idx + 1}>
-              {opt}
-            </MenuItem>
-          );
+          if (typeof opt === "string")
+            return (
+              <MenuItem key={idx} value={idx + 1}>
+                {opt}
+              </MenuItem>
+            );
           return (
             <MenuItem key={idx} value={opt.value}>
               {opt.label}
@@ -100,6 +115,11 @@ export const FSelect: React.FC<FSelectProps> = ({
           );
         })}
       </Select>
+      {helperText && (
+        <Typography color="error">
+          {helperText}
+        </Typography>
+      )}
     </FormControl>
   );
 };

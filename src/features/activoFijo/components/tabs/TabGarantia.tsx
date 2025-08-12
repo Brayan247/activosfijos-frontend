@@ -1,40 +1,72 @@
 import React from "react";
-import { Grid } from "@mui/material";
-import { FTextField } from "../FormControls";
+import {
+  Grid,
+  FormControl,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+} from "@mui/material";
+import { FSelect, FTextField } from "../FormControls";
 
-interface Props { formData: any; onChange: (name: string, value: any) => void; proveedores: string[]; proveedorSeleccionado: string; setProveedorSeleccionado: (val: string) => void; selects: any; }
+interface Props {
+  formData: any;
+  onChange: (name: string, value: any) => void;
+}
 
-const TabGarantia: React.FC<Props> = ({ formData, onChange, proveedores, proveedorSeleccionado, setProveedorSeleccionado }) => {
+const TabGarantia: React.FC<Props> = ({
+  formData,
+  onChange,
+}) => {
   return (
     <>
-      <Grid size={{xs:12, md:6}}>
-        <FTextField label="Tiene Garantía Activa?" name="tieneGarantia" value={formData.tieneGarantia} onChange={onChange} />
+      <Grid size={{ xs: 12 }}>
+        <FormControl component="fieldset">
+          <FormLabel component="legend">Tiene Garantía Activa?</FormLabel>
+          <RadioGroup
+            row
+            name="tieneGarantia"
+            value={formData.tieneGarantia ? "true" : "false"}
+            onChange={(e) =>
+              onChange("tieneGarantia", e.target.value === "true")
+            }
+          >
+            <FormControlLabel value="true" control={<Radio />} label="Sí" />
+            <FormControlLabel value="false" control={<Radio />} label="No" />
+          </RadioGroup>
+        </FormControl>
       </Grid>
-      <Grid size={{xs:12, md:6}}>
-        <FTextField label="Inicio Garantía" name="inicioGarantia" value={formData.inicioGarantia} onChange={onChange} type="date" />
-      </Grid>
-      <Grid size={{xs:12, md:6}}>
-        <FTextField label="Fin Garantía" name="finGarantia" value={formData.finGarantia} onChange={onChange} type="date" />
-      </Grid>
-      <Grid size={{xs:12, md:6}}>
-        <FormProviderSelect proveedores={proveedores} proveedorSeleccionado={proveedorSeleccionado} setProveedorSeleccionado={setProveedorSeleccionado} />
-      </Grid>
+      {formData.tieneGarantia === true && (
+        <>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <FTextField
+              label="Inicio Garantía"
+              name="inicioGarantia"
+              value={formData.inicioGarantia}
+              onChange={onChange}
+              type="date"
+            />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <FTextField
+              label="Fin Garantía"
+              name="finGarantia"
+              value={formData.finGarantia}
+              onChange={onChange}
+              type="date"
+            />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <FTextField
+              label="Proveedor de Garantia"
+              name="proveedorGarantia"
+              value={formData.proveedorGarantia}
+              onChange={onChange}
+            />
+          </Grid>
+        </>
+      )}
     </>
-  );
-};
-
-const FormProviderSelect: React.FC<any> = ({ proveedores, proveedorSeleccionado, setProveedorSeleccionado }) => {
-  // pequeño wrapper para no reimportar MUI
-  return (
-    <select
-      name="proveedorGarantia"
-      value={proveedorSeleccionado}
-      onChange={(e) => setProveedorSeleccionado(e.target.value)}
-      style={{ width: "100%", padding: "12px", borderRadius: 4 }}
-    >
-      <option value="">Seleccione proveedor</option>
-      {proveedores.map((p: string, i: number) => <option key={i} value={p}>{p}</option>)}
-    </select>
   );
 };
 

@@ -5,38 +5,109 @@ import { FTextField, FSelect } from "../FormControls";
 interface Props {
   formData: any;
   onChange: (name: string, value: any) => void;
-  selects: any;
+  tipoActivos: string[];
+  tipoActivoSeleccionado: string;
+  setTipoActivoSeleccionado: (val: string) => void;
+  estadoActivos: string[];
+  estadoActivoSeleccionado: string;
+  setEstadoActivoSeleccionado: (val: string) => void;
+  categoriaContable: string[];
+  categoriaContableSeleccionado: string;
+  setCategoriaContableSeleccionado: (val: string) => void;
 }
 
-const TabGeneral: React.FC<Props> = ({ formData, onChange, selects }) => {
+const TabGeneral: React.FC<Props> = ({
+  formData,
+  onChange,
+  tipoActivos,
+  tipoActivoSeleccionado,
+  setTipoActivoSeleccionado,
+  estadoActivos,
+  estadoActivoSeleccionado,
+  setEstadoActivoSeleccionado,
+  categoriaContable,
+  categoriaContableSeleccionado,
+  setCategoriaContableSeleccionado,
+}) => {
   return (
     <>
-      <Grid size={{xs:12, md:6}}>
-        <FTextField label="Código del Activo" name="codigo" value={formData.codigo} onChange={onChange} required />
+      <Grid size={{ xs: 12, md: 6 }}>
+        <FTextField
+          label="Descripción"
+          name="descripcion"
+          value={formData.descripcion}
+          onChange={onChange}
+          required
+        />
       </Grid>
-      <Grid size={{xs:12, md:6}}>
-        <FTextField label="Descripción" name="descripcion" value={formData.descripcion} onChange={onChange} required />
+      <Grid size={{ xs: 12, md: 6 }}>
+        <FSelect
+          label="Tipo de Activo"
+          name="tipoActivo"
+          value={tipoActivoSeleccionado}
+          onChange={(_, v) => setTipoActivoSeleccionado(v)}
+          options={tipoActivos}
+          inputLabelId="tipoActivoLabel"
+        />
       </Grid>
-      <Grid size={{xs:12, md:6}}>
-        <FSelect label="Tipo de Activo" name="tipoActivoId" value={formData.tipoActivoId} onChange={onChange} options={selects.tipoActivoId} inputLabelId="tipoActivoLabel" />
+      <Grid size={{ xs: 12, md: 6 }}>
+        <FSelect
+          label="Estado"
+          name="estadoActivo"
+          value={estadoActivoSeleccionado}
+          onChange={(_, v) => setEstadoActivoSeleccionado(v)}
+          options={estadoActivos}
+          inputLabelId="estado-label"
+        />
       </Grid>
-      <Grid size={{xs:12, md:6}}>
-        <FSelect label="Estado" name="estadoActivoId" value={formData.estadoActivoId} onChange={onChange} options={selects.estadoActivoId} inputLabelId="estado-label" />
+      <Grid size={{ xs: 12, md: 6 }}>
+        <FSelect
+          label="Categoría Contable"
+          name="categoriaContable"
+          value={categoriaContableSeleccionado}
+          onChange={(_, v) => setCategoriaContableSeleccionado(v)}
+          options={categoriaContable}
+          inputLabelId="categoriaContableLabel"
+        />
       </Grid>
-      <Grid size={{xs:12, md:6}}>
-        <FSelect label="Categoría Contable" name="categoriaContableId" value={formData.categoriaContableId} onChange={onChange} options={selects.categoriaContableId} inputLabelId="categoriaContableLabel" />
+      <Grid size={{ xs: 12, md: 6 }}>
+        <FTextField
+          label="Número de Serie"
+          name="numeroSerie"
+          value={formData.numeroSerie}
+          onChange={onChange}
+        />
       </Grid>
-      <Grid size={{xs:12, md:6}}>
-        <FTextField label="Número de Serie" name="numeroSerie" value={formData.numeroSerie} onChange={onChange} />
+      <Grid size={{ xs: 12, md: 6 }}>
+        <FTextField
+          label="Marca"
+          name="marca"
+          value={formData.marca}
+          onChange={onChange}
+        />
       </Grid>
-      <Grid size={{xs:12, md:6}}>
-        <FTextField label="Marca" name="marca" value={formData.marca} onChange={onChange} />
+      <Grid size={{ xs: 12, md: 6 }}>
+        <FTextField
+          label="Modelo"
+          name="modelo"
+          value={formData.modelo}
+          onChange={onChange}
+        />
       </Grid>
-      <Grid size={{xs:12, md:6}}>
-        <FTextField label="Modelo" name="modelo" value={formData.modelo} onChange={onChange} />
+      <Grid size={{ xs: 12 }}>
+        <Typography variant="body2" color="text.secondary">
+          * Agrega notas técnicas si aplica (capacidad, año fabricación, etc.).
+        </Typography>
       </Grid>
-      <Grid size={{xs:12}}>
-        <Typography variant="body2" color="text.secondary">* Agrega notas técnicas si aplica (capacidad, año fabricación, etc.).</Typography>
+      <Grid size={{ xs: 12 }}>
+        <FTextField
+          label="Notas técnicas"
+          name="notasTecnicas"
+          value={formData.notasTecnicas}
+          onChange={onChange}
+          multiline
+          minRows={4}
+        />
       </Grid>
     </>
   );
